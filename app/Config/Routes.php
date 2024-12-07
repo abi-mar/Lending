@@ -24,6 +24,8 @@ $routes->get('lending/login', 'UserController::login');
 
 // Customer routes
 $routes->get('lending/customer', 'CustomerController::index');
+$routes->get('lending/customer/create', 'CustomerController::create');
+$routes->post('lending/customer/add', 'CustomerController::add');
 
 
 // Groups
