@@ -7,7 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 $routes->get('/', 'Home::index');
 
-$routes->get('lending', 'MainController::index');
+$routes->get('lending', 'DashboardController::index');
 
 
 
@@ -15,17 +15,37 @@ $routes->get('lending', 'MainController::index');
 // Dashboard routes
 // $routes->get('lending/', 'DashboardController::index');
 
-// Loan routes
-$routes->get('lending/loan', 'LoanController::index');
-$routes->get('lending/loan/(:any)', 'LoanController::showAmount/$1');
-
 // User routes
-$routes->get('lending/login', 'UserController::login');
+// $routes->get('lending/login', 'LoginController::index');
+// $routes->get('lending/register', 'RegisterController::index');
+// $routes->post('lending/register/add', 'RegisterController::register');
+// $routes->post('lending/login/auth', 'LoginController::authenticate');
+
+// $routes->setDefaultController('RegisterController');
+
+$routes->get('lending/register', 'RegisterController::index', ['filter' => 'guestFilter']);
+$routes->post('lending/register', 'RegisterController::register', ['filter' => 'guestFilter']);
+
+$routes->get('lending/login', 'LoginController::index', ['filter' => 'guestFilter']);
+$routes->post('lending/login', 'LoginController::authenticate', ['filter' => 'guestFilter']);
+ 
+$routes->get('lending/logout', 'LoginController::logout', ['filter' => 'authFilter']);
+$routes->get('lending/dashboard', 'DashboardController::index', ['filter' => 'authFilter']);
+$routes->get('lending', 'DashboardController::index', ['filter' => 'authFilter']);
 
 // Customer routes
-$routes->get('lending/customer', 'CustomerController::index');
-$routes->get('lending/customer/create', 'CustomerController::create');
-$routes->post('lending/customer/add', 'CustomerController::add');
+$routes->get('lending/customer', 'CustomerController::index', ['filter' => 'authFilter']);
+$routes->get('lending/customer/create', 'CustomerController::create', ['filter' => 'authFilter']);
+$routes->post('lending/customer/add', 'CustomerController::add', ['filter' => 'authFilter']);
+$routes->get('lending/customer/edit/(:num)', 'CustomerController::edit/$1', ['filter' => 'authFilter']);
+$routes->post('lending/customer/update/(:num)', 'CustomerController::update/$1', ['filter' => 'authFilter']);
+$routes->get('lending/customer/delete/(:num)', 'CustomerController::delete/$1', ['filter' => 'authFilter']);
+
+// Loan routes
+$routes->get('lending/loan', 'LoanController::index', ['filter' => 'authFilter']);
+$routes->get('lending/loan/create/(:num)', 'LoanController::create/$1', ['filter' => 'authFilter']);
+$routes->post('lending/loan/add', 'LoanController::add', ['filter' => 'authFilter']);
+$routes->get('lending/loan/delete/(:num)', 'LoanController::delete/$1', ['filter' => 'authFilter']);
 
 
 // Groups
