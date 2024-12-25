@@ -40,7 +40,7 @@
 
                         <div class="card">
                             <div class="card-header">
-                                <h5>Add Student
+                                <h5>Add Customer
                                     <a href="<?= base_url('lending/customer'); ?>" class="btn btn-danger btn-sm float-end">BACK</a>
                                 </h5>
                             </div>

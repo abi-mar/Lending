@@ -33,7 +33,6 @@
                                         <th>Name</th>
                                         <th>Address</th>
                                         <th>Mobile #</th>
-                                        <th>Image</th>
                                         <th>Action</th>                                    
                                     </tr>
                                 </thead>
@@ -42,15 +41,15 @@
                                         <?php foreach($customers as $row) : 
                                             $name = $row['surname'].', '.$row['firstname'].' '.$row['middlename'].' '.$row['suffix'];
                                             ?>
-                                        <tr>
+                                        <tr id="<?php echo $row['custno']; ?>">
                                             <td><?php echo $row['custno']; ?></td>
                                             <td><?php echo $name; ?></td>
                                             <td><?php echo $row['address']; ?></td>
-                                            <td><?php echo $row['mobileno']; ?></td>
-                                            <td><img src="<?= base_url('uploads/images/').$row['image']; ?>" alt="image" height="100px" width="100px" /></td>
+                                            <td><?php echo $row['mobileno']; ?></td>                                            
                                             <td>
-                                                <a href="#" class="btn btn-primary btn-sm">Edit</a>
-                                                <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                                                <a href="<?= base_url('lending/customer/edit/'.$row['custno']) ?>" class="btn btn-primary btn-sm">Edit</a>
+                                                <a href="#" onclick="return false;" class="btn btn-danger btn-sm">Delete</a>
+                                                <a href="<?= base_url('lending/loan/create/'.$row['custno']) ?>" class="btn btn-warning btn-sm">Loan</a>
                                             </td>
                                         </tr>
                                         <?php endforeach; ?>
@@ -67,5 +66,66 @@
         </main>
     </div>
 </div>
+
+<script>   
+
+    $('.btn-danger').click(function(){
+        var id = $(this).parents("tr").attr("id");
+
+        if(confirm('Are you sure to remove this record ?')){
+        // send delete request
+            $.ajax({
+                url: '<?= base_url('lending/customer/delete/') ?>'+id,
+                type: 'DELETE',
+                error: function() {
+                    alert('Something is wrong');
+                },
+                success: function(data) {
+                    $("#"+id).remove();
+                    alert("Record removed successfully");
+                }
+            });
+        }
+        // BootstrapDialog.show({
+        //     title: 'Confirmation Message',
+        //     message: 'Are you sure you want to delete this customer?',
+        //     buttons: [{
+        //         label: 'Yes',
+        //         // no title as it is optional
+        //         cssClass: 'btn-primary',
+        //         action: function(){
+        //             // send delete request
+        //             $.ajax({
+        //                 url: '<?= base_url('lending/customer/delete/') ?>'+id,
+        //                 type: 'DELETE',
+        //                 error: function() {
+        //                     alert('Something is wrong');
+        //                 },
+        //                 success: function(data) {
+        //                     $("#"+id).remove();
+        //                     alert("Record removed successfully");
+        //                 }
+        //             });           
+        //         }
+        //     }, {                
+        //         label: 'No',
+        //         // no title as it is optional                
+        //         cssClass: 'btn-error',
+        //         action: function(dialogItself){
+        //             dialogItself.close();                    
+        //         }
+        //     }]
+        // });
+    });
+
+    
+    function confirm_delete() {        
+        //base_url('lending/customer/delete/'.$row['custno']) ?>
+        return false;
+        
+
+    }
+    
+</script>
 
 <?= $this->include('layouts/inc/footer') ?>
