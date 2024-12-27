@@ -6,23 +6,6 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
-
-$routes->get('lending', 'DashboardController::index');
-
-
-
-
-// Dashboard routes
-// $routes->get('lending/', 'DashboardController::index');
-
-// User routes
-// $routes->get('lending/login', 'LoginController::index');
-// $routes->get('lending/register', 'RegisterController::index');
-// $routes->post('lending/register/add', 'RegisterController::register');
-// $routes->post('lending/login/auth', 'LoginController::authenticate');
-
-// $routes->setDefaultController('RegisterController');
-
 $routes->get('lending/register', 'RegisterController::index', ['filter' => 'guestFilter']);
 $routes->post('lending/register', 'RegisterController::register', ['filter' => 'guestFilter']);
 
