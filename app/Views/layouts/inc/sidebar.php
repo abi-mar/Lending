@@ -1,4 +1,4 @@
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+<!--nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="dashboardlogo">
         <div class="name"></div>
         <a class="sidebar-brand" href="index.html">
@@ -9,7 +9,7 @@
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link active" href="<?= base_url('lending/dashboard') ?>">
-                    Dashboard <!--span class="sr-only">(current)</span-->
+                    Dashboard 
                 </a>
             </li>
             <li class="nav-item">
@@ -44,4 +44,13 @@
             </li>
         </ul>
     </div>
-</nav>
+</nav-->
+
+<div class="sidebar">
+        <h2>Dashboard</h2>
+        <a href="<?= base_url('lending/dashboard') ?>" class="active">Home</a>
+        <a href="<?= base_url('lending/customer') ?>">Customers</a>
+        <a href="<?= base_url('lending/loan') ?>">Loans</a>
+        <a href="#">Users</a>
+        <a href="<?= base_url('lending/logout') ?>">Logout</a>
+    </div>
