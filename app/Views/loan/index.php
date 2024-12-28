@@ -64,11 +64,40 @@
     </div>
 </div>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this loan record?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Yes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>        
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Initialize DataTables -->
 <script>
     $(document).ready(function() {
         $('#loanTable').DataTable({
             "order": [[0, "desc"]]
+        });
+
+        $('#loanTable').on('click', '.btn-danger', function(e) {
+            e.preventDefault();
+            var link = $(this).attr('href');
+            $('#confirmationModal').modal('show');
+
+            $('#confirmationModal .btn-primary').off('click').on('click', function() {
+                window.location.href = link;
+            });
         });
     });
 </script>
