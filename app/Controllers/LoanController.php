@@ -16,6 +16,7 @@ class LoanController extends BaseController
         $loan->select('customer.surname');
         $loan->select('loan_record.*');
         $data['loans'] = $loan->findAll();
+        $data['pageTitle'] = 'Loans';
         return view('loan/index.php', $data);
     }
 

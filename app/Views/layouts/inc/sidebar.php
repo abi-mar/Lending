@@ -47,10 +47,14 @@
 </nav-->
 
 <div class="sidebar">
-        <h2>Dashboard</h2>
-        <a href="<?= base_url('lending/dashboard') ?>" class="active">Home</a>
-        <a href="<?= base_url('lending/customer') ?>">Customers</a>
-        <a href="<?= base_url('lending/loan') ?>">Loans</a>
+        <div class="media">            
+            <img src="<?= base_url('assets/img/CLMS.png'); ?>" alt="User Avatar" class="img-size-50 mr-3 img-circle" style="width: 180px; height: 180px;">
+        </div>
+        <h3>Bayad Namo Utang!</h3>
+        
+        <a href="<?= base_url('lending/dashboard') ?>" <?= (isset($pageTitle) && $pageTitle=='Home') ? 'class="active"' : ''?> >Home</a>
+        <a href="<?= base_url('lending/customer') ?>" <?= (isset($pageTitle) && $pageTitle=='Customers') ? 'class="active"' : ''?>>Customers</a>
+        <a href="<?= base_url('lending/loan') ?>" <?= (isset($pageTitle) && $pageTitle=='Loans') ? 'class="active"' : ''?>>Loans</a>
         <a href="#">Users</a>
         <a href="<?= base_url('lending/logout') ?>">Logout</a>
     </div>

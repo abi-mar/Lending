@@ -10,6 +10,7 @@ class CustomerController extends BaseController {
     public function index(): string {
         $customer = new CustomerModel();
         $data['customers'] = $customer->findAll();
+        $data['pageTitle'] = 'Customers';
         return view('customer/index.php', $data);
     }
 

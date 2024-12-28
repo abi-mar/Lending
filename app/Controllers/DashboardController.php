@@ -8,6 +8,7 @@ class DashboardController extends BaseController
 {
     public function index()
     {
-        return view('dashboard');
+        $data['pageTitle'] = 'Home';
+        return view('dashboard', $data);
     }
 }

@@ -21,8 +21,8 @@
                         <a href="<?= base_url('lending/customer/create') ?>" class="btn btn-success btn-sm float-end">ADD</a>
                     </h4>
                 </div>
-                <div class="card-body">
-                    <table class="table table-striped">
+                <div class="card-body">                    
+                    <table id="customerTable" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -58,4 +58,10 @@
         </div>                
     </div>
 </div>
+<!-- Initialize DataTables -->
+<script>
+    $(document).ready(function() {
+        $('#customerTable').DataTable();
+    });
+</script>
 <?=$this->endSection()?>
