@@ -29,7 +29,8 @@
                                 <th>Name</th>
                                 <th>Address</th>
                                 <th>Mobile #</th>
-                                <th>Action</th>                                    
+                                <th>Balance</th>
+                                <th>Action</th>                                
                             </tr>
                         </thead>
                         <tbody>
@@ -41,7 +42,8 @@
                                     <td><?php echo $row['custno']; ?></td>
                                     <td><?php echo $name; ?></td>
                                     <td><?php echo $row['address']; ?></td>
-                                    <td><?php echo $row['mobileno']; ?></td>                                            
+                                    <td><?php echo $row['mobileno']; ?></td>
+                                    <td><?php echo $row['balance']; ?></td>
                                     <td>
                                         <a href="<?= base_url('lending/customer/edit/'.$row['custno']) ?>" class="btn btn-primary btn-sm">Edit</a>
                                         <a href="#" onclick="return false;" class="btn btn-danger btn-sm">Delete</a>
