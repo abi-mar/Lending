@@ -51,6 +51,7 @@
         
         <script src="<?= base_url('assets/js/jquery-3.7.1.js') ?>" crossorigin="anonymous"></script> <!-- from https://releases.jquery.com/ -->
         <script src="<?= base_url('assets/js/popper.min.js') ?>" crossorigin="anonymous"></script> <!-- from getbootstrap.com -->        
+        <!-- datatables based from https://datatables.net/examples/styling/bootstrap5.html -->
         <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>" crossorigin="anonymous"></script>        
         <script src="<?= base_url('assets/js/dataTables.js') ?>" crossorigin="anonymous"></script>
         <script src="<?= base_url('assets/js/dataTables.bootstrap5.js') ?>" crossorigin="anonymous"></script>
