@@ -61,7 +61,9 @@
 <!-- Initialize DataTables -->
 <script>
     $(document).ready(function() {
-        $('#customerTable').DataTable();
+        $('#customerTable').DataTable({
+            "order": [[0, "desc"]]
+        });
     });
 </script>
 <?=$this->endSection()?>
