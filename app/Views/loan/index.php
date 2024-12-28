@@ -19,7 +19,7 @@
                     <h4>Loan Records</h4>
                 </div>
                 <div class="card-body">
-                    <table class="table table-striped">
+                    <table id="loanTable" class="table table-striped">
                         <thead>
                             <tr>
                                 <th>ID</th>
@@ -62,4 +62,13 @@
         </div>                
     </div>
 </div>
+
+<!-- Initialize DataTables -->
+<script>
+    $(document).ready(function() {
+        $('#loanTable').DataTable({
+            "order": [[0, "desc"]]
+        });
+    });
+</script>
 <?=$this->endSection()?>
