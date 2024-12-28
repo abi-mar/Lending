@@ -55,6 +55,7 @@
         <a href="<?= base_url('lending/dashboard') ?>" <?= (isset($pageTitle) && $pageTitle=='Home') ? 'class="active"' : ''?> >Home</a>
         <a href="<?= base_url('lending/customer') ?>" <?= (isset($pageTitle) && $pageTitle=='Customers') ? 'class="active"' : ''?>>Customers</a>
         <a href="<?= base_url('lending/loan') ?>" <?= (isset($pageTitle) && $pageTitle=='Loans') ? 'class="active"' : ''?>>Loans</a>
+        <a href="#">Payments</a>
         <a href="#">Users</a>
         <a href="<?= base_url('lending/logout') ?>">Logout</a>
     </div>

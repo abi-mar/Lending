@@ -7,7 +7,8 @@
         <title><?= (isset($pageTitle)) ? $pageTitle : 'Document'?></title>
         <!-- CSS only -->
         <link rel="stylesheet" href="<?= base_url("assets/css/bootstrap.min.css") ?>">
-        <link rel="stylesheet" href="<?= base_url("assets/css/jquery.dataTables.min.css") ?>">
+        <link rel="stylesheet" href="<?= base_url("assets/css/dataTables.bootstrap5.css") ?>">
+        
         <style>
         .wrapper {
             align-items: stretch;
@@ -49,9 +50,11 @@
         </style>
         
         <script src="<?= base_url('assets/js/jquery-3.7.1.js') ?>" crossorigin="anonymous"></script> <!-- from https://releases.jquery.com/ -->
-        <script src="<?= base_url('assets/js/popper.min.js') ?>" crossorigin="anonymous"></script> <!-- from getbootstrap.com -->
-        <script src="<?= base_url('assets/js/bootstrap.min.js') ?>" crossorigin="anonymous"></script> <!-- from getbootstrap.com -->
-        <script src="<?= base_url('assets/js/jquery.dataTables.min.js') ?>"></script>
+        <script src="<?= base_url('assets/js/popper.min.js') ?>" crossorigin="anonymous"></script> <!-- from getbootstrap.com -->        
+        <script src="<?= base_url('assets/js/bootstrap.bundle.min.js') ?>" crossorigin="anonymous"></script>        
+        <script src="<?= base_url('assets/js/dataTables.js') ?>" crossorigin="anonymous"></script>
+        <script src="<?= base_url('assets/js/dataTables.bootstrap5.js') ?>" crossorigin="anonymous"></script>
+        
     </head>
 
 <body>
