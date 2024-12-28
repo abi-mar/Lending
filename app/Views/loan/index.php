@@ -48,8 +48,9 @@
                                     <td><?php echo $row['date_added']; ?></td>
                                     <td><?php echo $row['added_by']; ?></td>
                                     
-                                    <td>                                                
-                                        <a href="<?= base_url('lending/loan/delete/'.$row['row_id']) ?>" class="btn btn-danger btn-sm">Delete</a>
+                                    <td>
+                                        <a href="<?= base_url('lending/payment/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>                                                
+                                        <a href="<?= base_url('lending/loan/delete/'.$row['row_id']) ?>" class="btn btn-danger btn-sm">Delete</a>                                        
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

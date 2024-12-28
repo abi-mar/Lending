@@ -19,10 +19,10 @@
                             <label> Loan Amount </label>
                             <input type="text" name="loan_amount" class="form-control" placeholder="Enter Amount to Borrow" required/>
                         </div>
-                        <div class="form-group mb-2">
+                        <!--div class="form-group mb-2">
                             <label> Loan Date </label>
                             <input type="text" name="firstname" class="form-control" placeholder="Loan Date"/>
-                        </div>
+                        </div-->
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary mt-2">Save</button>
                         </div>

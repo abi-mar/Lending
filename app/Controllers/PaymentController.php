@@ -4,21 +4,23 @@ namespace App\Controllers;
 
 
 use App\Controllers\BaseController;
-use App\Models\LoanModel;
 use App\Models\PaymentModel;
 
-class LoanController extends BaseController
+class PaymentController extends BaseController
 {
     public function index(): string {
-        $loan = new LoanModel();
-        $loan->join('customer', 'customer.custno = loan_record.custno');
-        $loan->select('customer.firstname');
-        $loan->select('customer.middlename');
-        $loan->select('customer.surname');
-        $loan->select('loan_record.*');
-        $data['loans'] = $loan->findAll();
-        $data['pageTitle'] = 'Loans';
-        return view('loan/index.php', $data);
+        $payment = new PaymentModel();
+        $data['payments'] = $payment->findAll();
+        $data['pageTitle'] = 'Payments';
+        return view('payment/index.php', $data);
+    }
+
+    public function perLoan($loan_id): string {
+        $payment = new PaymentModel();
+        $payment->where('load_record_row_id', $loan_id);        
+        $data['payments'] = $payment->find();
+        $data['pageTitle'] = 'Payments';
+        return view('payment/index.php', $data);
     }
 
     public function create($custno) {

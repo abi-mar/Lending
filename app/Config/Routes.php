@@ -30,6 +30,9 @@ $routes->get('lending/loan/create/(:num)', 'LoanController::create/$1', ['filter
 $routes->post('lending/loan/add', 'LoanController::add', ['filter' => 'authFilter']);
 $routes->get('lending/loan/delete/(:num)', 'LoanController::delete/$1', ['filter' => 'authFilter']);
 
+// Payment routes
+$routes->get('lending/payment/(:num)', 'PaymentController::perLoan/$1', ['filter' => 'authFilter']);
+
 
 // Groups
 // $routes->group('lending/loan', function ($routes) {
