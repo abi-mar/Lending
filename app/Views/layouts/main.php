@@ -205,15 +205,45 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a-->
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link active">
+                <a href="<?= base_url('lending/dashboard') ?>" class="nav-link active">
                   <!--i class="far fa-circle nav-icon"></i-->
-                  <p>Active Page</p>
+                  <p>Dashboard</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('lending/customer') ?>" class="nav-link">
+                  <!--i class="far fa-circle nav-icon"></i-->
+                  <p>Customers</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link">
                   <!--i class="far fa-circle nav-icon"></i-->
-                  <p>Inactive Page</p>
+                  <p>Users</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('lending/loan') ?>" class="nav-link">
+                  <!--i class="far fa-circle nav-icon"></i-->
+                  <p>Loans</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <!--i class="far fa-circle nav-icon"></i-->
+                  <p>Reports</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <!--i class="far fa-circle nav-icon"></i-->
+                  <p>FAQ</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="<?= base_url('lending/logout') ?>" class="nav-link">
+                  <!--i class="far fa-circle nav-icon"></i-->
+                  <p>Logout</p>
                 </a>
               </li>
             </ul>
@@ -256,10 +286,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- Main content -->
     <div class="content">
-    <?= $this->renderSection('content') ?>
+    
       <div class="container-fluid">
         <div class="row">
-          <div class="col-lg-6">
+        <?= $this->renderSection('content') ?>
+
+          <!--div class="col-lg-6">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title">Card title</h5>
@@ -285,9 +317,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <a href="#" class="card-link">Card link</a>
                 <a href="#" class="card-link">Another link</a>
               </div>
-            </div><!-- /.card -->
+            </div>
           </div>
-          <!-- /.col-md-6 -->
+          <!-- /.col-md-6 >
           <div class="col-lg-6">
             <div class="card">
               <div class="card-header">
@@ -351,6 +383,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <!-- Bootstrap 4 -->
 <script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
-<script src="dist/js/adminlte.min.js"></script>
+<!--script src="dist/js/adminlte.min.js"></script-->
 </body>
 </html>
