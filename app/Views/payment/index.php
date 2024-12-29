@@ -12,54 +12,38 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
-        <?php }?>                    
+        <?php }?>
+            
 
             <div class="card">
                 <div class="card-header">
-                    <h4>Payments per Loan</h4>
+                    <h4>Payments                        
+                        <a href="<?= base_url('lending/payment/make') ?>" class="btn btn-success btn-sm float-end">Make Payment</a>                        
+                    </h4>
                 </div>
                 <div class="card-body">
-                    <table id="PaymentsPerLoanTable" class="table table-striped">
+                    <table id="PaymentsTable" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Loan ID</th>
+                                <th>Payment ID</th>
                                 <th>Amount</th>
-                                <th>Date Paid</th>
-                                <th>Scheduled Payment</th>
-                                <th>Is Paid?</th>
-                                <th>Is Overdue?</th>
-                                <th>Action</th>
+                                <th>Payment Date</th>
+                                <th>Date Added</th>
+                                <th>Added By</th>
+                                <th>Loan Record ID</th>                                
+                                <!--th>Action</th-->
                             </tr>
                         </thead>
                         <tbody>
                             <?php if ($payments): ?>
                                 <?php foreach($payments as $row) : ?>
                                 <tr>
-                                    <td><?php echo $row['load_record_row_id']; ?></td>                                    
-                                    <td><?= (isset($row['date_paid'])) ? $row['amount'] : '<span class="badge text-bg-secondary">N/A</span>'; ?></td>
-                                    <td><?= (isset($row['date_paid'])) ? $row['date_paid'] : '<span class="badge text-bg-secondary">N/A</span>'; ?></td>
-                                    <td><?php echo $row['scheduled_date']; ?></td>
-                                    <td><?= ($row['is_paid'] == 1) ? '<span class="badge text-bg-success">Yes</span>': '<span class="badge text-bg-danger">No</span>'; ?></td>
-                                    <td>
-                                        <?php
-                                            $scheduled_date = new DateTime($row['scheduled_date']);
-                                            $current_date = new DateTime();
-                                            if (isset($row['date_paid'])) {
-                                                echo '<span class="badge text-bg-secondary">N/A</span>';
-                                            } else {
-                                                echo ($scheduled_date < $current_date) ? '<span class="badge text-bg-success">Yes</span>' : '<span class="badge text-bg-danger">No</span>';
-                                            }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <?php 
-                                            if (isset($row['date_paid']) || ($scheduled_date > $current_date)) {
-                                                echo '<a href="#" class="btn btn-secondary btn-sm">Make Payment</a>';
-                                            } else {
-                                                echo '<a href="#" class="btn btn-primary btn-sm">Make Payment</a>';
-                                            }
-                                        ?>                                        
-                                    </td>
+                                    <td><?= $row['row_id']; ?></td>
+                                    <td><?= $row['amount']; ?></td>
+                                    <td><?= $row['payment_date']; ?></td>
+                                    <td><?= $row['date_added']; ?></td>
+                                    <td><?= $row['added_by']; ?></td>
+                                    <td><?= $row['loan_record_row_id']; ?></td>  
                                 </tr>
                                 <?php endforeach; ?>
                                 
@@ -75,7 +59,7 @@
 <!-- Initialize DataTables -->
 <script>
     $(document).ready(function() {
-        $('#PaymentsPerLoanTable').DataTable();
+        $('#PaymentsTable').DataTable();
     });
 </script>
 <?=$this->endSection()?>

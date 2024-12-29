@@ -5,7 +5,8 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\LoanModel;
-use App\Models\PaymentModel;
+use App\Models\CustomerModel;
+use App\Models\ScheduledPaymentModel;
 
 class LoanController extends BaseController
 {
@@ -21,12 +22,15 @@ class LoanController extends BaseController
         return view('loan/index.php', $data);
     }
 
-    public function create($custno) {
-        $data['custno'] = $custno;
+    public function create() {
+        // get list of customers
+        $customer = new CustomerModel();
+        $customer->orderBy('surname', 'ASC');
+        $data['customers'] = $customer->findAll();
         return view('loan/create', $data);
     }
 
-    // insert record on customer table
+    // insert record on loan table
     public function add() {        
         $loan = new LoanModel();
 
@@ -59,18 +63,7 @@ class LoanController extends BaseController
 
         $amount_topay = $loan_amount + $total_processing + $additional_fees;
 
-        echo $loan_amount;
-        echo $total_processing;
-        echo $additional_fees;
-
         $weekly_amortization = $amount_topay / 13; // 13 weeks to pay for now
-
-        $weekly_dates = [];
-        for ($i = 0; $i < 13; $i++) {
-            $weekly_dates[] = date('Y-m-d', strtotime("+$i week"));
-        }
-
-        $weekly_dates_string = implode(',', $weekly_dates);
 
         $data = [
             'loan_amount' => $loan_amount,
@@ -79,6 +72,7 @@ class LoanController extends BaseController
             'weekly_amortization' => $weekly_amortization,
             'net_proceeds' => $net_proceeds,
             'amount_topay' => $amount_topay,
+            'balance' => $amount_topay,
             'added_by' => session()->get('username')
         ];    
         
@@ -87,22 +81,39 @@ class LoanController extends BaseController
         $insertID = $loan->insertID();
 
         // create scheduled payment records
-        $payment = new PaymentModel();
+        $scheduled_payments = new ScheduledPaymentModel();
 
         $weekly_date = '';
-        for ($i = 0; $i < 13; $i++) {
-            $weekly_date = date('Y-m-d', strtotime("+$i week"));
-            $payment_data = [
+        for ($i = 1; $i <= 13; $i++) { // start to pay after 1 week, if NOW $i=0
+            $weekly_date = date('Y-m-d', strtotime("+$i week")); 
+            $sPayment_data = [
                 'amount' => 0,
                 'date_paid' => NULL,
                 'scheduled_date' => $weekly_date,
                 'added_by' => NULL,
                 'is_paid' => 0,
-                'load_record_row_id' => $insertID,
+                'remaining_debt' => $weekly_amortization,
+                'loan_record_row_id' => $insertID,
             ];
 
-            $payment->save($payment_data);
+            $scheduled_payments->save($sPayment_data);
+        }        
+
+        /** update customer balance */ 
+        // get the balance of all loan records of the customer
+        $loan->where('custno', $this->request->getPost('custno'));
+        $loan_records = $loan->findAll();
+
+        $total_balance = 0;        
+
+        foreach ($loan_records as $row) {
+            $total_balance += $row['balance'];
         }
+
+        $customer = new CustomerModel();
+        $customer->update($this->request->getPost('custno'), [
+            'balance' => $total_balance
+        ]);
 
         return redirect('lending/loan')->with('status','Loan created successfully!');
     }
@@ -120,11 +131,41 @@ class LoanController extends BaseController
     // delete record on customer table
     public function delete($id) {
         $loan = new LoanModel();
-
+        $customer = new CustomerModel();
+        
         $loan_rec = $loan->find($id);
+        
 
+        // update customer balance
+        /** update customer balance */ 
+        // get the balance of all loan records of the customer
+        $loan->where('custno', $loan_rec['custno']);
+        $loan_records = $loan->findAll();
+
+        $total_balance = 0;        
+
+        foreach ($loan_records as $row) {
+            $total_balance += $row['balance'];
+        }
+
+        
+        $customer->update($this->request->getPost('custno'), [
+            'balance' => $total_balance
+        ]);
+
+        // delete loan record
         $loan->delete($id);
+
         return redirect('lending/loan')->with('status','Loan deleted successfully!');
 
+    }
+
+    // get loan records of a customer: AJAX response
+    public function getLoansByCustomer($custno) {
+        $loan = new LoanModel();
+        $loan->where('custno', $custno);
+        $data['loans'] = $loan->findAll();
+
+        return $this->response->setJSON($data);
     }
 }

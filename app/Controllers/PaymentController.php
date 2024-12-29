@@ -4,7 +4,10 @@ namespace App\Controllers;
 
 
 use App\Controllers\BaseController;
+use App\Models\ScheduledPaymentModel;
 use App\Models\PaymentModel;
+use App\Models\LoanModel;
+use App\Models\CustomerModel;
 
 class PaymentController extends BaseController
 {
@@ -16,97 +19,111 @@ class PaymentController extends BaseController
     }
 
     public function perLoan($loan_id): string {
-        $payment = new PaymentModel();
-        $payment->where('load_record_row_id', $loan_id);        
-        $data['payments'] = $payment->find();
-        $data['pageTitle'] = 'Payments';
-        return view('payment/index.php', $data);
-    }
-
-    public function create($custno) {
-        $data['custno'] = $custno;
-        return view('loan/create', $data);
-    }
-
-    // insert record on customer table
-    public function add() {        
+        // get weekly amortization
         $loan = new LoanModel();
+        $data['loan'] = $loan->find($loan_id);
 
-        $loan_amount = $this->request->getPost('loan_amount');
+        $payment = new ScheduledPaymentModel();
+        $payment->where('loan_record_row_id', $loan_id);        
+        $data['sPayments'] = $payment->find();
+        $data['pageTitle'] = 'Scheduled Payments';
+        return view('payment/scheduled_payments.php', $data);
+    }
 
-        // make constants in future
-        $service_fee = 337.50;
-        $notary = 50.00;
-        $doc_stamp = 50.00;
+    // open payment form
+    public function makePayment(): string {
+        $customer = new CustomerModel();
+        $customer->orderBy('surname', 'ASC');
+        $data['customers'] = $customer->findAll();
 
-        // #2
-        $total_processing =  $service_fee + $notary + $doc_stamp;
+        return view('payment/create', $data);
+    }
 
-        // #3 NET PROCEEDS = LOAN AMOUNT - #2
-        $net_proceeds = $loan_amount - $total_processing;
-
-        // #4
-        $interest_rate = 0.045;
-        $interest = $loan_amount * $interest_rate * 3;
-
-        $LRF = 400.00; // to be removed
-
-        $savings_rate = 0.10;
-        $savings = $loan_amount * $savings_rate;
-
-        $damayan = 400.00;
-
-        // total for #4
-        $additional_fees = $interest + $LRF + $savings + $damayan;
-
-        $amount_topay = $loan_amount + $total_processing + $additional_fees;
-
-        echo $loan_amount;
-        echo $total_processing;
-        echo $additional_fees;
-
-        $weekly_amortization = $amount_topay / 13; // 13 weeks to pay for now
-
-        $weekly_dates = [];
-        for ($i = 0; $i < 13; $i++) {
-            $weekly_dates[] = date('Y-m-d', strtotime("+$i week"));
-        }
-
-        $weekly_dates_string = implode(',', $weekly_dates);
-
-        $data = [
-            'loan_amount' => $loan_amount,
-            'custno' => $this->request->getPost('custno'),
-            'loan_date' => date('Y-m-d'),
-            'weekly_amortization' => $weekly_amortization,
-            'net_proceeds' => $net_proceeds,
-            'amount_topay' => $amount_topay,
-            'added_by' => session()->get('username')
-        ];    
-        
-        $loan->save($data);
-
-        $insertID = $loan->insertID();
-
-        // create scheduled payment records
+    public function makePaymentPerLoan($loan_record_row_id): string {
         $payment = new PaymentModel();
+        $data['loan_record_row_id'] = $loan_record_row_id;
 
-        $weekly_date = '';
-        for ($i = 0; $i < 13; $i++) {
-            $weekly_date = date('Y-m-d', strtotime("+$i week"));
-            $payment_data = [
-                'amount' => 0,
-                'date_paid' => NULL,
-                'scheduled_date' => $weekly_date,
-                'added_by' => NULL,
-                'is_paid' => 0,
-                'load_record_row_id' => $insertID,
-            ];
+        $loan = new LoanModel();
+        $loan->select('loan_record.*, customer.surname, customer.firstname, customer.middlename');
+        $loan->join('customer', 'customer.custno = loan_record.custno');
+        $loan->where('loan_record.row_id', $loan_record_row_id);
+        $data['record'] = $loan->first(); // find seems to return an array object
+        
+        return view('payment/create', $data);
+    }
 
-            $payment->save($payment_data);
+    // Add payment record to make payment
+    // add validation for when amount is greater than the remaining loan record balance
+    public function add() {
+        // Models
+        $payment = new PaymentModel();        
+        $loan = new LoanModel();
+        $customer = new CustomerModel();
+
+        $loan_id = $this->request->getPost('loan_record');
+        $amount = $this->request->getPost('amount');
+
+        // GET Loan and Customer records
+        $loanRow = $loan->find($loan_id);
+        $custRow = $loan->find($loanRow['custno']);
+        
+        // save payment record
+        $data = [
+            'loan_record_row_id' => $loan_id,
+            'amount' => $amount,
+            'payment_date' => $this->request->getPost('payment_date'),
+            'added_by' => session()->get('username')
+        ];
+
+        $payment->save($data);
+
+        // update loan record balance
+        $loan->update($loan_id, ['balance' => $loanRow['balance'] - $amount]);
+
+        /** update customer balance */ 
+        // get the balance of all loan records of the customer
+        $loan->where('custno', $this->request->getPost('custno'));
+        $loan_records = $loan->findAll();
+
+        $total_loan_balance = 0;        
+
+        foreach ($loan_records as $row) {
+            $total_loan_balance += $row['balance'];
         }
 
-        return redirect('lending/loan')->with('status','Loan created successfully!');
+        $customer->update($loanRow['custno'], ['balance' => $total_loan_balance]);
+
+        // [START] update scheduled payments
+        // get weekly amortization
+        $weekly_amortization = $loanRow['weekly_amortization'];
+
+        $scheduledPayment = new ScheduledPaymentModel();
+
+        $scheduledPayment->where('loan_record_row_id', $loan_id);
+        $scheduledPayment->where('is_paid', '0');
+        $scheduledPayment->orderBy('scheduled_date', 'ASC');
+        $scheduledPayments = $scheduledPayment->findAll();
+
+        $remainingAmount = $amount;
+
+        foreach ($scheduledPayments as $row) {
+            
+            if ($remainingAmount >= $row['remaining_debt']) { // fully paid scheduled payment                
+                $remainingAmount = $remainingAmount - $weekly_amortization;
+                $scheduledPayment->update($row['row_id'], ['is_paid' => 1, 'amount' => $weekly_amortization, 
+                'date_paid' => $this->request->getPost('payment_date'), 'paid_by' => session()->get('username'), 'remaining_debt' => 0, 'added_by' => session()->get('username')]);
+            } else if ($remainingAmount < $row['remaining_debt'] && $remainingAmount > 0) {
+                $debt = $row['remaining_debt'] - $remainingAmount;
+                $remainingAmount = 0;
+                $scheduledPayment->update($row['row_id'], ['remaining_debt' => $debt]);
+            } else {
+                break;
+            }
+        }
+
+        // [END]
+        
+        return redirect()->to('lending/payment/perLoan/'.$loan_id)->with('status', 'Payment added successfully!');        
     }
 
     // Redirect to Edit page

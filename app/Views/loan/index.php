@@ -16,7 +16,9 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h4>Loan Records</h4>
+                    <h4>Loan Records
+                        <a href="<?= base_url('lending/loan/create') ?>" class="btn btn-success btn-sm float-end">ADD</a>
+                    </h4>
                 </div>
                 <div class="card-body">
                     <table id="loanTable" class="table table-striped">
@@ -49,7 +51,7 @@
                                     <td><?php echo $row['added_by']; ?></td>
                                     
                                     <td>
-                                        <a href="<?= base_url('lending/payment/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>                                                
+                                        <a href="<?= base_url('lending/payment/perLoan/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>                                                
                                         <a href="<?= base_url('lending/loan/delete/'.$row['row_id']) ?>" class="btn btn-danger btn-sm">Delete</a>                                        
                                     </td>
                                 </tr>

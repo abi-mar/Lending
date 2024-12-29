@@ -46,8 +46,7 @@
                                     <td><?php echo $row['balance']; ?></td>
                                     <td>
                                         <a href="<?= base_url('lending/customer/edit/'.$row['custno']) ?>" class="btn btn-primary btn-sm">Edit</a>
-                                        <a href="#" onclick="return false;" class="btn btn-danger btn-sm">Delete</a>
-                                        <a href="<?= base_url('lending/loan/create/'.$row['custno']) ?>" class="btn btn-warning btn-sm">Loan</a>
+                                        <a href="<?= base_url('lending/customer/delete/'.$row['custno']) ?>" class="btn btn-danger btn-sm">Delete</a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -60,11 +59,41 @@
         </div>                
     </div>
 </div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this customer record?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Yes</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>        
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Initialize DataTables -->
 <script>
     $(document).ready(function() {
         $('#customerTable').DataTable({
             "order": [[0, "desc"]]
+        });
+
+        $('#customerTable').on('click', '.btn-danger', function(e) {
+            e.preventDefault();
+            var link = $(this).attr('href');
+            $('#confirmationModal').modal('show');
+
+            $('#confirmationModal .btn-primary').off('click').on('click', function() {
+                window.location.href = link;
+            });
         });
     });
 </script>
