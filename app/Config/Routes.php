@@ -26,12 +26,19 @@ $routes->get('lending/customer/delete/(:num)', 'CustomerController::delete/$1', 
 
 // Loan routes
 $routes->get('lending/loan', 'LoanController::index', ['filter' => 'authFilter']);
-$routes->get('lending/loan/create/(:num)', 'LoanController::create/$1', ['filter' => 'authFilter']);
+//$routes->get('lending/loan/create/(:num)', 'LoanController::create/$1', ['filter' => 'authFilter']);
+$routes->get('lending/loan/create', 'LoanController::create', ['filter' => 'authFilter']);
 $routes->post('lending/loan/add', 'LoanController::add', ['filter' => 'authFilter']);
 $routes->get('lending/loan/delete/(:num)', 'LoanController::delete/$1', ['filter' => 'authFilter']);
+$routes->get('lending/loan/getLoanRecords/(:num)', 'LoanController::getLoansByCustomer/$1');
+
 
 // Payment routes
-$routes->get('lending/payment/(:num)', 'PaymentController::perLoan/$1', ['filter' => 'authFilter']);
+$routes->get('lending/payment', 'PaymentController::index', ['filter' => 'authFilter']);
+$routes->get('lending/payment/perLoan/(:num)', 'PaymentController::perLoan/$1', ['filter' => 'authFilter']);
+$routes->get('lending/payment/make', 'PaymentController::makePayment', ['filter' => 'authFilter']);
+$routes->get('lending/payment/make/(:num)', 'PaymentController::makePaymentPerLoan/$1', ['filter' => 'authFilter']);
+$routes->post('lending/payment/add', 'PaymentController::add', ['filter' => 'authFilter']);
 
 
 // Groups
