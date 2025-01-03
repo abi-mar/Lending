@@ -47,15 +47,15 @@
                             <?php if ($loans): ?>
                                 <?php foreach($loans as $row) : ?>
                                 <tr>
-                                <td><?php echo $row['row_id']; ?></td>
-                                    <td><?php echo $row['surname'].', '.$row['firstname']; ?></td>
-                                    <td><?php echo $row['loan_amount']; ?></td>
-                                    <td><?php echo $row['net_proceeds']; ?></td>
-                                    <td><?php echo $row['loan_date']; ?></td>
-                                    <td><?php echo $row['weekly_amortization']; ?></td>
-                                    <td><?php echo $row['amount_topay']; ?></td>
-                                    <td><?php echo $row['date_added']; ?></td>
-                                    <td><?php echo $row['added_by']; ?></td>
+                                <td><?= $row['row_id']; ?></td>
+                                    <td><?= $row['surname'].', '.$row['firstname']; ?></td>
+                                    <td><?= number_format($row['loan_amount'], 2); ?></td>
+                                    <td><?= number_format($row['net_proceeds'], 2); ?></td>
+                                    <td><?= $row['loan_date']; ?></td>
+                                    <td><?= number_format($row['weekly_amortization'], 2); ?></td>
+                                    <td><?= number_format($row['amount_topay'], 2); ?></td>
+                                    <td><?= $row['date_added']; ?></td>
+                                    <td><?= $row['added_by']; ?></td>
                                     
                                     <td>
                                         <a href="<?= base_url('lending/payment/perLoan/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>                                                
