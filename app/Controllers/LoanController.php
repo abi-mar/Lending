@@ -88,6 +88,13 @@ class LoanController extends BaseController
             'net_proceeds' => $net_proceeds,
             'amount_topay' => $amount_topay,
             'balance' => $amount_topay,
+            'service_fee' => $service_fee,
+            'notary' => $notary,
+            'doc_stamp' => $doc_stamp,
+            'interest' => $interest,
+            'lrf' => $LRF,
+            'savings' => $savings,
+            'damayan' => $damayan,            
             'added_by' => session()->get('username')
         ];    
         
@@ -131,6 +138,8 @@ class LoanController extends BaseController
 
         // increment collections record
         $collections = new CollectionModel();
+
+        $collections->truncate();
 
         $collections->save([
             'service_fee' => $service_fee,
