@@ -37,7 +37,7 @@ class LoanController extends BaseController
         $loan_amount = $this->request->getPost('loan_amount');
 
         // make constants in future
-        $service_fee = 337.50;
+        $service_fee = $loan_amount * 0.058; // loan amount x 5.8%
         $notary = 50.00;
         $doc_stamp = 50.00;
 
@@ -49,9 +49,9 @@ class LoanController extends BaseController
 
         // #4
         $interest_rate = 0.045;
-        $interest = $loan_amount * $interest_rate * 3;
+        $interest = $loan_amount * $interest_rate * 3; // 3 months duration
 
-        $LRF = 400.00; // to be removed
+        $LRF = 400.00;
 
         $savings_rate = 0.10;
         $savings = $loan_amount * $savings_rate;
@@ -61,7 +61,7 @@ class LoanController extends BaseController
         // total for #4
         $additional_fees = $interest + $LRF + $savings + $damayan;
 
-        $amount_topay = $loan_amount + $total_processing + $additional_fees;
+        $amount_topay = $loan_amount + $additional_fees;
 
         $weekly_amortization = $amount_topay / 13; // 13 weeks to pay for now
 
