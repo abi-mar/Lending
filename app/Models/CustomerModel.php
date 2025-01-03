@@ -6,7 +6,7 @@ class CustomerModel extends Model {
     protected $table = 'customer';
     protected $primaryKey = 'custno';
     protected $allowedFields = [
-        'firstname', 'middlename', 'surname', 'suffix', 'address', 'mobileno', 'image', 'balance'
+        'firstname', 'middlename', 'surname', 'suffix', 'address', 'mobileno', 'image', 'balance', 'added_by'
     ];
 
 }

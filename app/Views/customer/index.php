@@ -46,7 +46,7 @@
                                     <td><?php echo $row['balance']; ?></td>
                                     <td>
                                         <a href="<?= base_url('lending/customer/edit/'.$row['custno']) ?>" class="btn btn-primary btn-sm">Edit</a>
-                                        <a href="<?= base_url('lending/customer/delete/'.$row['custno']) ?>" class="btn btn-danger btn-sm">Delete</a>
+                                        <!--a href="<?= base_url('lending/customer/delete/'.$row['custno']) ?>" class="btn btn-danger btn-sm">Delete</a-->
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>

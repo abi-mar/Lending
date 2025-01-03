@@ -53,7 +53,8 @@ class CustomerController extends BaseController {
                 'suffix' => $this->request->getPost('suffix'),
                 'address' => $this->request->getPost('address'),
                 'mobileno' => $this->request->getPost('mobileno'),
-                'image' => $imageName
+                'image' => $imageName,
+                'added_by' => session()->get('username')
             ];
     
             $customer->save($data);
