@@ -7,6 +7,8 @@ use App\Controllers\BaseController;
 use App\Models\LoanModel;
 use App\Models\CustomerModel;
 use App\Models\ScheduledPaymentModel;
+use App\Models\CollectionModel;
+use App\Models\CollectionAuditModel;
 
 class LoanController extends BaseController
 {
@@ -32,6 +34,19 @@ class LoanController extends BaseController
 
     // insert record on loan table
     public function add() {        
+        $customer = new CustomerModel();
+
+        $customer->where('custno', $this->request->getPost('custno'));
+        $customer_data = $customer->first();
+
+        if ($customer_data['balance'] > 0) {
+            return redirect('lending/loan')->with('error','Customer has an existing balance. Please settle the balance first.');
+        }
+
+        if ($this->request->getPost('loan_amount') < 6000) {
+            return redirect('lending/loan')->with('error','Loan amount must be at least 6000.');
+        }
+
         $loan = new LoanModel();
 
         $loan_amount = $this->request->getPost('loan_amount');
@@ -110,9 +125,36 @@ class LoanController extends BaseController
             $total_balance += $row['balance'];
         }
 
-        $customer = new CustomerModel();
         $customer->update($this->request->getPost('custno'), [
             'balance' => $total_balance
+        ]);
+
+        // increment collections record
+        $collections = new CollectionModel();
+
+        $collections->save([
+            'service_fee' => $service_fee,
+            'notary' => $notary,
+            'doc_stamp' => $doc_stamp,
+            'interest' => $interest,
+            'LRF' => $LRF,
+            'savings' => $savings,
+            'damayan' => $damayan            
+        ]);
+
+        // increment collections audit record
+        $collections_audit = new CollectionAuditModel();
+
+        $collections_audit->save([
+            'service_fee' => $service_fee,
+            'notary' => $notary,
+            'doc_stamp' => $doc_stamp,
+            'interest' => $interest,
+            'LRF' => $LRF,
+            'savings' => $savings,
+            'damayan' => $damayan,
+            'date_modified' => date('Y-m-d H:i:s'),
+            'modified_by' => session()->get('username')
         ]);
 
         return redirect('lending/loan')->with('status','Loan created successfully!');

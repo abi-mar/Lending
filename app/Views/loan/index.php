@@ -6,13 +6,20 @@
         <div class="col-md-12">
 
         <?php if (session()->getFlashdata('status')) { ?>
-
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Message:</strong> <?= session()->getFlashdata('status') ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-
         <?php }?>                    
+
+        <?php if (session()->getFlashdata('error')) { ?>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> <?= session()->getFlashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+        <?php }?>
 
             <div class="card">
                 <div class="card-header">
@@ -52,7 +59,7 @@
                                     
                                     <td>
                                         <a href="<?= base_url('lending/payment/perLoan/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>                                                
-                                        <a href="<?= base_url('lending/loan/delete/'.$row['row_id']) ?>" class="btn btn-danger btn-sm">Delete</a>                                        
+                                        <!--a href="<?= base_url('lending/loan/delete/'.$row['row_id']) ?>" class="btn btn-danger btn-sm">Delete</a-->
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
