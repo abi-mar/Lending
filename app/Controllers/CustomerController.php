@@ -5,7 +5,8 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\CustomerModel;
 
-class CustomerController extends BaseController {    
+class CustomerController extends BaseController {
+    protected $helpers = ['form'];
 
     public function index(): string {
         $customer = new CustomerModel();
@@ -21,6 +22,23 @@ class CustomerController extends BaseController {
     // insert record on customer table
     public function add() {
         $customer = new CustomerModel();
+
+        // server side validation
+        // $rules = [
+        //     'firstname' => 'required|max_length[100]',
+        //     'middlename' => 'max_length[100]',
+        //     'surname' => 'required|max_length[100]',
+        //     'suffix'    => 'max_length[10]',
+        //     'address'    => 'required|max_length[100]',
+        //     'mobileno'    => 'required|max_length[20]',
+        //     'image'    => 'required'
+        // ];
+
+        // $post_data = $this->request->getPost(array_keys($rules));
+
+        // if (! $this->validateData($post_data, $rules)) {
+        //     return view('customer/create', ['validation' => $this->validator]);
+        // }
 
         $file = $this->request->getFile('image');
         
