@@ -15,9 +15,9 @@
         <?php }?>                     
 
             <div class="alert alert-info" role="alert">
-                Weekly Amortization: <strong> <?= $loan['weekly_amortization'] ?> </strong> <br>                
-                Total For Payment: <?= $loan['amount_topay'] ?> </strong> <br>
-                Loan Balance: <?= $loan['balance'] ?>
+                Weekly Amortization: <strong> <?= number_format($loan['weekly_amortization'], 2); ?> </strong> <br>                
+                Total For Payment: <?= number_format($loan['amount_topay'], 2); ?> </strong> <br>
+                Loan Balance: <?= number_format($loan['balance'], 2); ?>
             </div>
             
 
@@ -47,11 +47,11 @@
                                 ?>
                                 <?php foreach($sPayments as $row) : ?>
                                 <tr>
-                                    <td><?php echo $row['loan_record_row_id']; ?></td>                                    
+                                    <td><?= $row['loan_record_row_id']; ?></td>                                    
                                     <td><?= (isset($row['date_paid'])) ? $row['amount'] : '<span class="badge text-bg-secondary">N/A</span>'; ?></td>
                                     <td><?= (isset($row['date_paid'])) ? $row['date_paid'] : '<span class="badge text-bg-secondary">N/A</span>'; ?></td>
-                                    <td><?php echo $row['scheduled_date']; ?></td>
-                                    <td><?php echo $row['remaining_debt']; ?></td>
+                                    <td><?= $row['scheduled_date']; ?></td>
+                                    <td><?= number_format($row['remaining_debt'], 2); ?></td>
                                     <td><?= ($row['is_paid'] == 1) ? '<span class="badge text-bg-success">Yes</span>': '<span class="badge text-bg-danger">No</span>'; ?></td>
                                     <td>
                                         <?php
