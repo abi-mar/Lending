@@ -69,7 +69,7 @@ class DashboardController extends BaseController
         $amount_of_damayan_from_collection = $collection * $percent_damayan;
         $amount_of_damayan_from_collectible = $current_collectible * $percent_damayan;
         
-        $data['current_cycle'] = $current_cycle = '1' ? 'First Cycle (January to June)' : 'Second Cycle (July to December)';
+        $data['current_cycle'] = ($current_cycle = '1' ? 'First Cycle (January to June' : 'Second Cycle (July to December') . ' ' . $current_year . ')';
         $data['info']['service_fee'] = $service_fee;
         $data['info']['notary'] = $notary;
         $data['info']['doc_stamp'] = $doc_stamp;
