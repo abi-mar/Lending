@@ -56,7 +56,8 @@
                 { "width": "70%", "targets": 0 },
                 { "width": "30%", "targets": 1 }
             ],
-            "paging": false,
+            "paging": true,
+            "pageLength": 15,
             "searching": false,
             "info": false
         });

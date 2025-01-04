@@ -21,14 +21,30 @@
                                 <th>Info</th>
                                 <th>Value</th>
                             </tr>
-                        </thead>                           
-                    <?php foreach ($info as $key => $value): ?>
-                        <tr><td><strong><?= ucfirst(str_replace('_', ' ', $key)) ?>:</strong></td><td> <?= $value ?> </td></tr>
-                    <?php endforeach; ?>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($info as $key => $value): ?>
+                            <tr><td><strong><?= ucfirst(str_replace('_', ' ', $key)) ?>:</strong></td><td> <?= $value ?> </td></tr>
+                        <?php endforeach; ?>
+                        </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    
+    $('#summary').DataTable({
+        "columnDefs": [
+            { "width": "70%", "targets": 0 },
+            { "width": "30%", "targets": 1 }
+        ],
+        "paging": true,
+        "pageLength": 15,
+        "searching": false,
+        "info": false
+    });
+</script>
+    
 <?=$this->endSection()?>            
