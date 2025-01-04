@@ -13,8 +13,21 @@ class PaymentController extends BaseController
 {
     public function index(): string {
         $payment = new PaymentModel();
+        $payment->select('payment.*, loan_record.loan_date, customer.surname, customer.firstname, customer.middlename');
+        $payment->join('loan_record', 'loan_record.row_id = payment.loan_record_row_id');
+        $payment->join('customer', 'customer.custno = loan_record.custno');
+        $payment->limit(1000);
+        $payment->orderBy('payment_date', 'DESC');
+        
         $data['payments'] = $payment->findAll();
+
+        // reset $payment variable to get total count
+        // not sure if reset is necessary
+        $payment = new PaymentModel();
+        $payment_total_count = $payment->countAll();
+
         $data['pageTitle'] = 'Payments';
+        $data['total_count'] = $payment_total_count;
         return view('payment/index.php', $data);
     }
 
@@ -23,10 +36,15 @@ class PaymentController extends BaseController
         $loan = new LoanModel();
         $data['loan'] = $loan->find($loan_id);
 
-        $payment = new ScheduledPaymentModel();
-        $payment->where('loan_record_row_id', $loan_id);        
-        $data['sPayments'] = $payment->find();
-        $data['pageTitle'] = 'Scheduled Payments';
+        $sPayment = new ScheduledPaymentModel();
+        $sPayment->where('loan_record_row_id', $loan_id);        
+        $data['sPayments'] = $sPayment->find();
+        $data['pageTitle'] = 'Payments';
+
+        $payment = new PaymentModel();
+        $payment->where('loan_record_row_id', $loan_id);
+        $payment->orderBy('payment_date', 'DESC');
+        $data['payments'] = $payment->findAll();
         return view('payment/scheduled_payments.php', $data);
     }
 
@@ -35,6 +53,8 @@ class PaymentController extends BaseController
         $customer = new CustomerModel();
         $customer->orderBy('surname', 'ASC');
         $data['customers'] = $customer->findAll();
+
+        $data['pageTitle'] = 'Payments';
 
         return view('payment/create', $data);
     }
@@ -48,6 +68,8 @@ class PaymentController extends BaseController
         $loan->join('customer', 'customer.custno = loan_record.custno');
         $loan->where('loan_record.row_id', $loan_record_row_id);
         $data['record'] = $loan->first(); // find seems to return an array object
+
+        $data['pageTitle'] = 'Payments';
         
         return view('payment/create', $data);
     }
@@ -62,10 +84,15 @@ class PaymentController extends BaseController
 
         $loan_id = $this->request->getPost('loan_record');
         $amount = $this->request->getPost('amount');
+        $custno = $this->request->getPost('custno');
 
-        // GET Loan and Customer records
-        $loanRow = $loan->find($loan_id);
-        $custRow = $loan->find($loanRow['custno']);
+        // GET Loan record
+        $loanRow = $loan->first($loan_id);
+        // $custRow = $customer->find($custno);
+
+        if($amount > $loanRow['balance']) {
+            return redirect()->to('lending/payment/make/'.$loan_id)->with('error', 'Amount is greater than the remaining balance of the loan record!');
+        }
         
         // save payment record
         $data = [
@@ -124,6 +151,18 @@ class PaymentController extends BaseController
         // [END]
         
         return redirect()->to('lending/payment/perLoan/'.$loan_id)->with('status', 'Payment added successfully!');        
+    }
+    
+    public function getRecordsByBatch($offset): string {
+        $payment = new PaymentModel();
+        $payment->select('payment.*, loan_record.loan_date, customer.surname, customer.firstname, customer.middlename');
+        $payment->join('loan_record', 'loan_record.row_id = payment.loan_record_row_id');
+        $payment->join('customer', 'customer.custno = loan_record.custno');
+        $payment->limit(1000, $offset); // page 2 is offset 1000
+        $payment->orderBy('payment_date', 'DESC');
+        
+        $data = $payment->findAll();
+        return json_encode($data);
     }
 
     // Redirect to Edit page

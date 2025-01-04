@@ -10,8 +10,18 @@ class CustomerController extends BaseController {
 
     public function index(): string {
         $customer = new CustomerModel();
+        $customer->orderBy('balance, date_modified', 'DESC');
+        $customer->limit(1000);
         $data['customers'] = $customer->findAll();
         $data['pageTitle'] = 'Customers';
+
+        // reset variable to get total count
+        // not sure if reset is necessary
+        $customer = new CustomerModel();
+        $total_count = $customer->countAll();
+
+        $data['total_count'] = $total_count;
+
         return view('customer/index.php', $data);
     }
 
@@ -123,6 +133,20 @@ class CustomerController extends BaseController {
         $customer->delete($custno);
         return redirect('lending/customer')->with('status','Customer deleted successfully!');
 
+    }
+
+    public function getRecordsByBatch($offset): string {
+        $loan = new LoanModel();
+        $loan->join('customer', 'customer.custno = loan_record.custno');
+        $loan->select('customer.firstname');
+        $loan->select('customer.middlename');
+        $loan->select('customer.surname');
+        $loan->select('loan_record.*');
+        $loan->orderBy('loan_date', 'DESC');
+        $loan->limit(1000, $offset); // page 1 is offset 0, page 2 is offset 1000
+        $data = $loan->findAll();
+ 
+        return json_encode($data);
     }
 
 }

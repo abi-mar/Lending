@@ -5,6 +5,14 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-12">
+            <?php if (session()->getFlashdata('error')) { ?>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> <?= session()->getFlashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <?php }?>
 
             <div class="card">
                 <div class="card-header">
@@ -28,10 +36,10 @@
                                 <?php endforeach; ?>
                             </select>                           
                         </div>
-                        <!--div class="form-group mb-2">
-                            <label> Loan Date </label>
-                            <input type="text" name="firstname" class="form-control" placeholder="Loan Date"/>
-                        </div-->
+                        <div class="form-group mb-2">
+                            <label> Loan Date <span style="color:red">*</span></label>
+                            <input type="text" name="loan_date" class="form-control datepicker" placeholder="Loan Date" required/>
+                        </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary mt-2">Save</button>
                         </div>
@@ -51,6 +59,12 @@
                 //.replace(/(^[\d]{4})[\d]/g, '$1')   // not more than 4 digits at the beginning
                 .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
                 .replace(/(\.[\d]{2})./g, '$1');    // not more than 2 digits after decimal
+        });
+
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
         });
     });
 </script>

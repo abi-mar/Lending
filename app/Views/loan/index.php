@@ -1,7 +1,7 @@
 <?=$this->extend('layouts/main')?>
 <?=$this->section('content')?>
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
 
@@ -37,7 +37,8 @@
                                 <th>Net Proceeds</th>
                                 <th>Loan Date</th>
                                 <th>Weekly Amortization</th>
-                                <th>Total Amount for Payment</th>
+                                <th>Collectible</th>
+                                <th>Balance</th>
                                 <th>Date Added</th>
                                 <th>Added By</th>
                                 <th>Action</th>
@@ -54,11 +55,14 @@
                                     <td><?= $row['loan_date']; ?></td>
                                     <td><?= number_format($row['weekly_amortization'], 2); ?></td>
                                     <td><?= number_format($row['amount_topay'], 2); ?></td>
+                                    <td><?= number_format($row['balance'], 2); ?></td>
                                     <td><?= $row['date_added']; ?></td>
-                                    <td><?= $row['added_by']; ?></td>
-                                    
+                                    <td><?= $row['added_by']; ?></td>                                    
                                     <td>
-                                        <a href="<?= base_url('lending/payment/perLoan/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>                                                
+                                        <a href="<?= base_url('lending/payment/perLoan/'.$row['row_id']) ?>" class="btn btn-primary btn-sm">Payments</a>
+                                        <?php if($row['PaymentStatus'] == 'Unpaid') : ?>
+                                        <a href="<?= base_url('lending/loan/edit/'.$row['row_id']) ?>" class="btn btn-info btn-sm">Edit</a>
+                                        <?php endif; ?>
                                         <!--a href="<?= base_url('lending/loan/delete/'.$row['row_id']) ?>" class="btn btn-danger btn-sm">Delete</a-->
                                     </td>
                                 </tr>
@@ -67,6 +71,9 @@
                             <?php endif; ?>
                         </tbody>
                     </table>
+
+                    <button class="btn btn-primary btn-sm" id="btnLoadPrevious" style="display:none">Load Previous 1000 records</button>
+                    <button class="btn btn-primary btn-sm" id="btnLoadNext">Load Next 1000 records</button>
                 </div>
             </div>    
         </div>                
@@ -94,19 +101,69 @@
 
 <!-- Initialize DataTables -->
 <script>
-    $(document).ready(function() {
-        $('#loanTable').DataTable({
-            "order": [[0, "desc"]]
+    var pageCounter = 1;    
+    var $overall_count = <?= $total_count; ?>;
+
+    if (pageCounter*1000 >= $overall_count) {
+        $('#btnLoadNext').hide();
+    }
+
+    $('#loanTable').DataTable({
+        "order": [[0, "desc"]]
+    });
+
+    // delete confirmation
+    $('#loanTable').on('click', '.btn-danger', function(e) {
+        e.preventDefault();
+        var link = $(this).attr('href');
+        $('#confirmationModal').modal('show');
+
+        $('#confirmationModal .btn-primary').off('click').on('click', function() {
+            window.location.href = link;
         });
+    });
 
-        $('#loanTable').on('click', '.btn-danger', function(e) {
-            e.preventDefault();
-            var link = $(this).attr('href');
-            $('#confirmationModal').modal('show');
+    $('#btnLoadPrevious').click(function() {
+        pageCounter--;
+        $.ajax({
+            url: '<?= base_url('lending/payment/getPaymentsByBatch');?>',
+            type: 'GET',
+            data: { offset: (pageCounter - 1)*1000},
+            success: function(response) {
+                $('#PaymentsTable tbody').html(response);
+                
+                if(pageCounter > 1) {
+                    $('#btnLoadPrevious').prop('disabled', false);
+                } else {
+                    $('#btnLoadPrevious').prop('disabled', true);
+                }
 
-            $('#confirmationModal .btn-primary').off('click').on('click', function() {
-                window.location.href = link;
-            });
+                if (pageCounter*1000 >= $overall_count) {
+                    $('#btnLoadNext').prop('disabled', true);
+                }
+            }
+        });
+    });
+
+    $('#btnLoadNext').click(function() {
+        pageCounter++;
+        $.ajax({
+            url: '<?= base_url('lending/payment/getPaymentsByBatch');?>',
+            type: 'GET',
+            data: { offset: (pageCounter - 1)*1000},
+            success: function(response) {
+                $('#PaymentsTable tbody').html(response);
+
+                if(pageCounter > 1) {
+                    $('#btnLoadPrevious').prop('disabled', false);
+                } else {
+                    $('#btnLoadPrevious').prop('disabled', true);
+                }
+                
+                if (pageCounter*1000 >= $overall_count) {
+                    $('#btnLoadNext').prop('disabled', true);
+                }
+            }
         });
     });
 </script>

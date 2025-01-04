@@ -4,6 +4,14 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-12">
+            <?php if (session()->getFlashdata('error')) { ?>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> <?= session()->getFlashdata('error') ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <?php }?>
 
             <div class="card">
                 <div class="card-header">
@@ -16,31 +24,31 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form action="<?= base_url('lending/payment/add/') ?>" method="POST" enctype="multipart/form-data">                        
+                    <form action="<?= base_url('lending/payment/add/') ?>" method="POST">
                         <div class="form-group mb-2">
-                            <label> Amount </label>
+                            <label> Amount <span style="color:red">*</span></label>
                             <input type="text" name="amount" class="form-control decimal" placeholder="Enter Amount to Pay" required/>
                         </div>
                         <div class="form-group mb-2">
-                            <label> Payment Date </label>
+                            <label> Payment Date <span style="color:red">*</span></label>
                             <input type="text" name="payment_date" class="form-control datepicker" placeholder="Select Payment Date" required/>
                         </div>
                         
                         <?php if(isset($loan_record_row_id)) : ?>
                             <div class="form-group mb-2">
-                                <label> Customer </label>
+                                <label> Customer <span style="color:red">*</span></label>
                                 <input type="text" class="form-control" value="<?= $record['surname'].', '.$record['firstname'].' '. $record['middlename']; ?>" readonly/>
                                 <input type="hidden" name="custno" value="<?= $record['custno'] ?>"/>
                             </div>
                             <div class="form-group mb-2">
-                                <label> Loan Record </label>
-                                <input type="text" class="form-control" value="<?= 'Loan Date: '.$record['loan_date'].', Loan Amount: '.$record['loan_amount']; ?>" readonly/>
+                                <label> Loan Record <span style="color:red">*</span></label>
+                                <input type="text" class="form-control" value="<?= 'Loan ID: '.$record['row_id'].', Loan Date: '.$record['loan_date'].', Loan Amount: '.$record['loan_amount'].', Weekly Amortization: '.$record['weekly_amortization'].', Balance: '.$record['balance']; ?>" readonly/>
                                 <input type="hidden" name="loan_record" value="<?= $loan_record_row_id; ?>"/>
                             </div>
                         <?php else : ?>
                         
                         <div class="form-group mb-2">
-                            <label> Customer </label>                            
+                            <label> Customer <span style="color:red">*</span></label>                            
                             <select class="form-select" name="custno" id="customer" data-placeholder="Select Customer" required>
                                 <option value="">---</option>
                                 <?php foreach($customers as $customer): ?>
@@ -49,10 +57,9 @@
                             </select>
                         </div>
                         <div class="form-group mb-2">
-                            <label> Loan Record </label>
-                            <select class="form-select" name="loan_record" id="loan_record" required>
-                                <option value="">---</option>                                
-                            </select>
+                            <label> Loan Record <span style="color:red">*</span></label>
+                            <input type="text" class="form-control" id="loan_record_text" value="" readonly/>
+                            <input type="hidden" name="loan_record" id="loan_record" value=""/>
                         </div>
                         <?php endif; ?>
                         <!--div class="form-group mb-2">
@@ -74,7 +81,7 @@
         $('.decimal').on('input', function() {
             this.value = this.value
                 .replace(/[^\d.]/g, '')             // numbers and decimals only
-                .replace(/(^[\d]{4})[\d]/g, '$1')   // not more than 4 digits at the beginning
+                // .replace(/(^[\d]{4})[\d]/g, '$1')   // not more than 4 digits at the beginning
                 .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
                 .replace(/(\.[\d]{2})./g, '$1');    // not more than 2 digits after decimal
         });
@@ -90,19 +97,25 @@
 
         // get loan records based on customer when customer is selected
         $('#customer').on('change', function() {
-            var custno = $(this).val();
-            var url = '<?= base_url('lending/loan/getLoanRecords/') ?>'+custno;
+            var loan_id = $(this).val();
 
-            $('#loan_record').html('<option value="">---</option>');
-            $.get(url, function(data) {
-                var loans = data.loans;
+            if (loan_id === '') {
+                $('#loan_record').html('<option value="">---</option>');
+                return;
+            } else {
 
-                loans.forEach(function(loan) {
-                    $('#loan_record').append('<option value="'+loan.row_id+'"> Loan ID: '+loan.row_id+', Loan Date: '+loan.loan_date+', Loan Amount: '+loan.loan_amount+'</option>');
+                var url = '<?= base_url('lending/loan/getLoanRecordOfCustomer/') ?>'+loan_id;
+
+                $('#loan_record').html('<option value="">---</option>');
+
+                
+                $.get(url, function(data) {
+                    var loan = JSON.parse(data);
+                    
+                    $('#loan_record_text').val('Loan ID: '+loan.row_id+', Loan Date: '+loan.loan_date+', Loan Amount: '+loan.loan_amount+', Weekly Amortization: '+loan.weekly_amortization+', Balance: '+loan.balance);
+                    $('#loan_record').val(loan.row_id);
                 });
-                // $('#loan_record').html(data);
-                $('#loan_record').trigger('chosen:updated');
-            });
+            }
         });
         
     });
