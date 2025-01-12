@@ -62,7 +62,7 @@ class ReportController extends BaseController {
             $current_collectible_percent = $total_collectible > 0 ? $current_collectible * 100 / $total_collectible : 0;
 
             // other computations
-            $expected_ROI = $total_collectible - $capital - $savings - $damayan;
+            $expected_ROI = $total_collectible - $capital - $savings - $damayan - $LRF;
             $percent_cap = $total_collectible > 0 ? $capital / $total_collectible : 0;
             $percent_ROI = $total_collectible > 0 ? $expected_ROI / $total_collectible : 0;
 
