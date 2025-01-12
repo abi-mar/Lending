@@ -87,8 +87,7 @@ class PaymentController extends BaseController
         $custno = $this->request->getPost('custno');
 
         // GET Loan record
-        $loanRow = $loan->first($loan_id);
-        // $custRow = $customer->find($custno);
+        $loanRow = $loan->find($loan_id);
 
         if($amount > $loanRow['balance']) {
             return redirect()->to('lending/payment/make/'.$loan_id)->with('error', 'Amount is greater than the remaining balance of the loan record!');
@@ -104,10 +103,15 @@ class PaymentController extends BaseController
 
         $payment->save($data);
 
+        // echo $loan_id.'<br>';
+        // echo $amount.'<br>';
+        // echo $loanRow['balance'].'<br>';
+        // echo $loanRow['row_id'].'<br>';
+
         // update loan record balance
         $loan->update($loan_id, ['balance' => $loanRow['balance'] - $amount]);
 
-        /** update customer balance */ 
+        // /** update customer balance */ 
         // get the balance of all loan records of the customer
         $loan->where('custno', $this->request->getPost('custno'));
         $loan_records = $loan->findAll();
