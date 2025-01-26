@@ -9,6 +9,7 @@ use App\Models\PaymentModel;
 use App\Models\LoanModel;
 use App\Models\CustomerModel;
 use App\Models\CollectionModel;
+use App\Models\LogsModel;
 
 class PaymentController extends BaseController
 {
@@ -106,6 +107,20 @@ class PaymentController extends BaseController
 
         $payment->save($data);
 
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data = [
+            'custno' => $custno,
+            'notes' => '[PAYMENT ADDED]'. 
+            ' [loan_record_row_id] '. $loan_id.
+            '; [amount] ' . $amount.
+            '; [payment_date] '. $this->request->getPost('payment_date'),
+            'added_by' => session()->get('username')
+        ];
+
+        $logs->save($logs_data);
+
         // update loan record balance
         $loan->update($loan_id, ['balance' => $loanRow['balance'] - $amount]);
 
@@ -165,6 +180,21 @@ class PaymentController extends BaseController
         ];
 
         $collection->update(1, $update_collection);
+
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data = [
+            'custno' => $custno,
+            'notes' => '[COLLECTION ADDED]'. 
+            ' [interest] '. $collection_data['interest'] + ($loanRow['interest'] / 13).
+            '; [savings] '. $collection_data['savings'] + ($loanRow['savings'] / 13).
+            '; [LRF] '. $collection_data['LRF'] + ($loanRow['LRF'] / 13).
+            '; [damayan] '. $collection_data['damayan'] + ($loanRow['damayan'] / 13),
+            'added_by' => session()->get('username')
+        ];
+
+        $logs->save($logs_data);
         
         return redirect()->to('lending/payment/perLoan/'.$loan_id)->with('status', 'Payment added successfully!');        
     }
@@ -191,14 +221,26 @@ class PaymentController extends BaseController
     //     return view('customer/edit.php', $data);
     // }
 
-    // delete record on customer table
-    public function delete($id) {
-        $loan = new LoanModel();
+    // delete record on payment table -- CURRENTLY NOT USED
+    // public function delete($id) {
+    //     $payment = new PaymentModel();
 
-        $loan_rec = $loan->find($id);
+    //     // $loan_rec = $loan->find($id);
 
-        $loan->delete($id);
-        return redirect('lending/loan')->with('status','Loan deleted successfully!');
+    //     $payment->delete($id);
 
-    }
+    //     // add in logs
+    //     $logs = new LogsModel();
+
+    //     $logs_data = [
+    //         'custno' => $custno,
+    //         'notes' => '[PAYMENT DELETED]'. 
+    //         ' [ID] '. $id,
+    //         'added_by' => session()->get('username')
+    //     ];
+
+    //     $logs->save($logs_data);
+    //     return redirect('lending/loan')->with('status','Payment deleted successfully!');
+
+    // }
 }

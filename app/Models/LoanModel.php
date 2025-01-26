@@ -6,7 +6,7 @@ class LoanModel extends Model {
     protected $table = 'loan_record';
     protected $primaryKey = 'row_id';
     protected $allowedFields = [
-        'custno', 'loan_date', 'loan_amount', 'net_proceeds', 'weekly_amortization', 'amount_topay', 'balance', 'added_by', 
+        'custno', 'loan_date', 'loan_amount', 'net_proceeds', 'weekly_amortization', 'amount_topay', 'balance', 
         'service_fee', 'notary', 'doc_stamp', 'interest', 'lrf', 'savings', 'damayan', 'added_by', 'modified_by'
     ];
 

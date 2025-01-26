@@ -8,6 +8,7 @@ use App\Models\LoanModel;
 use App\Models\CustomerModel;
 use App\Models\ScheduledPaymentModel;
 use App\Models\CollectionModel;
+use App\Models\LogsModel;
 
 class LoanController extends BaseController
 {
@@ -111,9 +112,33 @@ class LoanController extends BaseController
             'savings' => $savings,
             'damayan' => $damayan,            
             'added_by' => session()->get('username')
-        ];    
+        ];
         
         $loan->save($data);
+
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data = [
+            'custno' => $this->request->getPost('custno'),
+            'notes' => '[LOAN ADDED] '.
+                    '; [loan_amount] ' .           $loan_amount,        
+                    '; [loan_date] ' .             $loan_date,
+                    '; [weekly_amortization] ' .   $weekly_amortization,
+                    '; [net_proceeds] ' .          $net_proceeds,
+                    '; [amount_topay] ' .          $amount_topay,
+                    '; [balance] ' .               $amount_topay,
+                    '; [service_fee] ' .           $service_fee,
+                    '; [notary] ' .                $notary,
+                    '; [doc_stamp] ' .             $doc_stamp,
+                    '; [interest] ' .              $interest,
+                    '; [lrf] ' .                   $LRF,
+                    '; [savings] ' .               $savings,
+                    '; [damayan] ' .               $damayan,
+            'added_by' => session()->get('username')
+        ];
+
+        $logs->save($logs_data);
 
         $insertID = $loan->insertID();
 
@@ -151,20 +176,6 @@ class LoanController extends BaseController
             'balance' => $total_balance
         ]);
 
-        /** Add in collection entry */
-        // $collection = new CollectionModel();
-
-        // $collection_data = $collection->first();
-
-        // $update_collection = [
-        //     'interest' => $collection_data['interest'] + $interest,
-        //     'savings' => $collection_data['savings'] + $savings,
-        //     'LRF' => $collection_data['LRF'] + $LRF,
-        //     'damayan' => $collection_data['damayan'] + $damayan
-        // ];
-
-        // $collection->update(1, $update_collection);
-
         return redirect('lending/loan')->with('status','Loan created successfully!');
     }
 
@@ -178,7 +189,7 @@ class LoanController extends BaseController
         return view('loan/edit.php', $data);
     }
 
-    // update record on customer table
+    // update record on loan_records table
     public function update($loan_id) {
         $loan = new LoanModel();
 
@@ -237,6 +248,32 @@ class LoanController extends BaseController
 
         $loan->update($loan_id, $data);
 
+        
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data = [
+            'custno' => $this->request->getPost('custno'),
+            'notes' => '[LOAN UPDATED] '.
+                    '; [ID] ' .           $loan_id,        
+                    '; [loan_amount] ' .           $loan_amount,        
+                    '; [loan_date] ' .             $loan_date,
+                    '; [weekly_amortization] ' .   $weekly_amortization,
+                    '; [net_proceeds] ' .          $net_proceeds,
+                    '; [amount_topay] ' .          $amount_topay,
+                    '; [balance] ' .               $amount_topay,
+                    '; [service_fee] ' .           $service_fee,
+                    '; [notary] ' .                $notary,
+                    '; [doc_stamp] ' .             $doc_stamp,
+                    '; [interest] ' .              $interest,
+                    '; [lrf] ' .                   $LRF,
+                    '; [savings] ' .               $savings,
+                    '; [damayan] ' .               $damayan,
+            'added_by' => session()->get('username')
+        ];
+
+        $logs->save($logs_data);
+
         // regenerate customer balance
         $customer = new CustomerModel();
 
@@ -272,26 +309,12 @@ class LoanController extends BaseController
 
             $scheduled_payments->save($sPayment_data);
         }
-
-        /** Add in collection entry */
-        // $collection = new CollectionModel();
-
-        // $collection_data = $collection->first();
-
-        // $update_collection = [
-        //     'interest' => $collection_data['interest'] + $interest - $old_loan_data['interest'],
-        //     'savings' => $collection_data['savings'] + $savings - $old_loan_data['savings'],
-        //     'LRF' => $collection_data['LRF'] + $LRF - $old_loan_data['lrf'],
-        //     'damayan' => $collection_data['damayan'] + $damayan - $old_loan_data['damayan']
-        // ];
-
-        // $collection->update(1, $update_collection);
         
         return redirect('lending/loan')->with('status','Loan updated successfully!');
 
     }
 
-    // delete record on customer table
+    // delete record on LOAN table
     public function delete($id) {
         $loan = new LoanModel();
         $customer = new CustomerModel();
@@ -310,7 +333,6 @@ class LoanController extends BaseController
         foreach ($loan_records as $row) {
             $total_balance += $row['balance'];
         }
-
         
         $customer->update($this->request->getPost('custno'), [
             'balance' => $total_balance
@@ -318,6 +340,18 @@ class LoanController extends BaseController
 
         // delete loan record
         $loan->delete($id);
+
+        
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data = [
+            'custno' => $this->request->getPost('custno'),
+            'notes' => '[LOAN DELETED] Loan ID: '.id,
+            'added_by' => session()->get('username')
+        ];
+
+        $logs->save($logs_data);
 
         return redirect('lending/loan')->with('status','Loan deleted successfully!');
 

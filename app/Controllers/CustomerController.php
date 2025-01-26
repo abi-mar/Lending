@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CustomerModel;
+use App\Models\LogsModel;
 
 class CustomerController extends BaseController {
     protected $helpers = ['form'];
@@ -68,6 +69,20 @@ class CustomerController extends BaseController {
             ];
     
             $customer->save($data);
+
+            // add in logs
+            $logs = new LogsModel();
+
+            $logs_data['notes'] = '[CUSTOMER CREATED] firstname: '. $this->request->getPost('firstname') . 
+            ';middlename: ' . $this->request->getPost('middlename') . 
+            ';surname: ' . $this->request->getPost('surname') . 
+            ';suffix: ' . $this->request->getPost('suffix') . 
+            ';address: ' . $this->request->getPost('address') . 
+            ';mobileno: ' . $this->request->getPost('mobileno');
+
+            $logs_data['added_by'] = session()->get('username');
+
+            $logs->save($logs_data);
             return redirect('lending/customer')->with('status','Customer created successfully!');
         }
 
@@ -115,6 +130,22 @@ class CustomerController extends BaseController {
         ];
 
         $customer->update($custno, $data);
+
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data['custno'] = $custno;
+        $logs_data['notes'] = '[CUSTOMER UPDATED] firstname: '. $this->request->getPost('firstname') . 
+        ';middlename: ' . $this->request->getPost('middlename') . 
+        ';surname: ' . $this->request->getPost('surname') . 
+        ';suffix: ' . $this->request->getPost('suffix') . 
+        ';address: ' . $this->request->getPost('address') . 
+        ';mobileno: ' . $this->request->getPost('mobileno');
+
+        $logs_data['added_by'] = session()->get('username');
+
+        $logs->save($logs_data);
+
         return redirect('lending/customer')->with('status','Customer updated successfully!');
 
     }
@@ -131,6 +162,17 @@ class CustomerController extends BaseController {
         }
 
         $customer->delete($custno);
+
+        // add in logs
+        $logs = new LogsModel();
+
+        $logs_data = [
+            'custno' => $custno,
+            'notes' => '[CUSTOMER DELETED]',
+            'added_by' => session()->get('username')
+        ];
+
+        $logs->save($logs_data);
         return redirect('lending/customer')->with('status','Customer deleted successfully!');
 
     }
