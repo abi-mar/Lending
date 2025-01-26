@@ -153,18 +153,18 @@ class PaymentController extends BaseController
         // [END]
 
         /** Add in collection entry */
-        // $collection = new CollectionModel();
+        $collection = new CollectionModel();
 
-        // $collection_data = $collection->first();
+        $collection_data = $collection->first();
 
-        // $update_collection = [
-        //     'interest' => $collection_data['interest'] + $interest,
-        //     'savings' => $collection_data['savings'] + $savings,
-        //     'LRF' => $collection_data['LRF'] + $LRF,
-        //     'damayan' => $collection_data['damayan'] + $damayan
-        // ];
+        $update_collection = [
+            'interest' => $collection_data['interest'] + ($loanRow['interest'] / 13),
+            'savings' => $collection_data['savings'] + ($loanRow['savings'] / 13),
+            'LRF' => $collection_data['LRF'] + ($loanRow['lrf'] / 13),
+            'damayan' => $collection_data['damayan'] + ($loanRow['damayan'] / 13)
+        ];
 
-        // $collection->update(1, $update_collection);
+        $collection->update(1, $update_collection);
         
         return redirect()->to('lending/payment/perLoan/'.$loan_id)->with('status', 'Payment added successfully!');        
     }
