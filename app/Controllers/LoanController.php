@@ -114,7 +114,11 @@ class LoanController extends BaseController
             'added_by' => session()->get('username')
         ];
         
-        $loan->save($data);
+        if (!$loan->save($data)) {
+            return redirect('lending/loan/create')->with('error', 'Failed to create loan.');
+        }
+
+        $insertID = $loan->insertID();
 
         // add in logs
         $logs = new LogsModel();
@@ -139,8 +143,6 @@ class LoanController extends BaseController
         ];
 
         $logs->save($logs_data);
-
-        $insertID = $loan->insertID();
 
         // create scheduled payment records
         $scheduled_payments = new ScheduledPaymentModel();
