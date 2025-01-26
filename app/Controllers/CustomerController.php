@@ -72,13 +72,15 @@ class CustomerController extends BaseController {
 
             // add in logs
             $logs = new LogsModel();
+            
+            $logs_data['custno'] = $customer->insertID();
 
-            $logs_data['notes'] = '[CUSTOMER CREATED] firstname: '. $this->request->getPost('firstname') . 
-            ';middlename: ' . $this->request->getPost('middlename') . 
-            ';surname: ' . $this->request->getPost('surname') . 
-            ';suffix: ' . $this->request->getPost('suffix') . 
-            ';address: ' . $this->request->getPost('address') . 
-            ';mobileno: ' . $this->request->getPost('mobileno');
+            $logs_data['notes'] = '[CUSTOMER CREATED] [firstname] '. $this->request->getPost('firstname') . 
+            '; [middlename] ' . $this->request->getPost('middlename') . 
+            '; [surname] ' . $this->request->getPost('surname') . 
+            '; [suffix] ' . $this->request->getPost('suffix') . 
+            '; [address] ' . $this->request->getPost('address') . 
+            '; [mobileno] ' . $this->request->getPost('mobileno');
 
             $logs_data['added_by'] = session()->get('username');
 
@@ -135,12 +137,12 @@ class CustomerController extends BaseController {
         $logs = new LogsModel();
 
         $logs_data['custno'] = $custno;
-        $logs_data['notes'] = '[CUSTOMER UPDATED] firstname: '. $this->request->getPost('firstname') . 
-        ';middlename: ' . $this->request->getPost('middlename') . 
-        ';surname: ' . $this->request->getPost('surname') . 
-        ';suffix: ' . $this->request->getPost('suffix') . 
-        ';address: ' . $this->request->getPost('address') . 
-        ';mobileno: ' . $this->request->getPost('mobileno');
+        $logs_data['notes'] = '[CUSTOMER UPDATED] firstname: '. $this->request->getPost('firstname') .         
+        '; [middlename] ' . $this->request->getPost('middlename') . 
+        '; [surname] ' . $this->request->getPost('surname') . 
+        '; [suffix] ' . $this->request->getPost('suffix') . 
+        '; [address] ' . $this->request->getPost('address') . 
+        '; [mobileno] ' . $this->request->getPost('mobileno');
 
         $logs_data['added_by'] = session()->get('username');
 
