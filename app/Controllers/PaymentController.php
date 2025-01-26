@@ -53,7 +53,9 @@ class PaymentController extends BaseController
     // open payment form
     public function makePayment(): string {
         $customer = new CustomerModel();
-        $customer->orderBy('surname', 'ASC');
+        $customer->select('loan_record.*, customer.surname, customer.firstname, customer.middlename');
+        $customer->join('loan_record', 'customer.custno = loan_record.custno');
+        $customer->orderBy('surname', 'ASC');        
         $data['customers'] = $customer->findAll();
 
         $data['pageTitle'] = 'Payments';
