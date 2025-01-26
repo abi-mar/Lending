@@ -58,6 +58,14 @@
 <script>
     $(document).ready(function() {
         $('#source').chosen(); // initialize chosen select
+
+        $('.decimal').on('input', function() {
+            this.value = this.value
+                .replace(/[^\d.]/g, '')             // numbers and decimals only
+                //.replace(/(^[\d]{4})[\d]/g, '$1')   // not more than 4 digits at the beginning
+                .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
+                .replace(/(\.[\d]{2})./g, '$1');    // not more than 2 digits after decimal
+        });
     });
 </script>
 
