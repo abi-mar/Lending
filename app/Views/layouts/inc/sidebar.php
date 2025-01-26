@@ -50,12 +50,13 @@
         <div class="media">            
             <img src="<?= base_url('assets/img/logo.jpg'); ?>" alt="User Avatar" class="img-size-50 mr-3 img-circle" style="width: 180px; height: 180px;">
         </div>
-        <h3>Bayad Namo Utang!</h3>
+        <!--h3>Bayad Namo Utang!</h3-->
         
         <a href="<?= base_url('lending/dashboard') ?>" <?= (isset($pageTitle) && $pageTitle=='Home') ? 'class="active"' : ''?> >Home</a>
         <a href="<?= base_url('lending/customer') ?>" <?= (isset($pageTitle) && $pageTitle=='Customers') ? 'class="active"' : ''?>>Customers</a>
         <a href="<?= base_url('lending/loan') ?>" <?= (isset($pageTitle) && $pageTitle=='Loans') ? 'class="active"' : ''?>>Loans</a>
         <a href="<?= base_url('lending/payment') ?>" <?= (isset($pageTitle) && $pageTitle=='Payments') ? 'class="active"' : ''?>>Payments</a>
         <a href="<?= base_url('lending/report') ?>" <?= (isset($pageTitle) && $pageTitle=='Reports') ? 'class="active"' : ''?>>Reports</a>
+        <a href="<?= base_url('lending/withdraw') ?>" <?= (isset($pageTitle) && $pageTitle=='Withdraw') ? 'class="active"' : ''?>>Withdraw</a>
         <a href="<?= base_url('lending/logout') ?>">Logout</a>
 </div>

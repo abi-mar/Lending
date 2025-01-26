@@ -8,6 +8,7 @@ use App\Models\ScheduledPaymentModel;
 use App\Models\PaymentModel;
 use App\Models\LoanModel;
 use App\Models\CustomerModel;
+use App\Models\CollectionModel;
 
 class PaymentController extends BaseController
 {
@@ -91,6 +92,8 @@ class PaymentController extends BaseController
 
         if($amount > $loanRow['balance']) {
             return redirect()->to('lending/payment/make/'.$loan_id)->with('error', 'Amount is greater than the remaining balance of the loan record!');
+        } else if ($amount % $loanRow['weekly_amortization'] != 0) {
+            return redirect()->to('lending/payment/make/'.$loan_id)->with('error', 'Amount must be divisible by the weekly amortization!');
         }
         
         // save payment record
@@ -102,11 +105,6 @@ class PaymentController extends BaseController
         ];
 
         $payment->save($data);
-
-        // echo $loan_id.'<br>';
-        // echo $amount.'<br>';
-        // echo $loanRow['balance'].'<br>';
-        // echo $loanRow['row_id'].'<br>';
 
         // update loan record balance
         $loan->update($loan_id, ['balance' => $loanRow['balance'] - $amount]);
@@ -153,6 +151,20 @@ class PaymentController extends BaseController
         }
 
         // [END]
+
+        /** Add in collection entry */
+        // $collection = new CollectionModel();
+
+        // $collection_data = $collection->first();
+
+        // $update_collection = [
+        //     'interest' => $collection_data['interest'] + $interest,
+        //     'savings' => $collection_data['savings'] + $savings,
+        //     'LRF' => $collection_data['LRF'] + $LRF,
+        //     'damayan' => $collection_data['damayan'] + $damayan
+        // ];
+
+        // $collection->update(1, $update_collection);
         
         return redirect()->to('lending/payment/perLoan/'.$loan_id)->with('status', 'Payment added successfully!');        
     }

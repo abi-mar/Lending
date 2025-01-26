@@ -8,7 +8,6 @@ use App\Models\LoanModel;
 use App\Models\CustomerModel;
 use App\Models\ScheduledPaymentModel;
 use App\Models\CollectionModel;
-use App\Models\CollectionAuditModel;
 
 class LoanController extends BaseController
 {
@@ -152,6 +151,20 @@ class LoanController extends BaseController
             'balance' => $total_balance
         ]);
 
+        /** Add in collection entry */
+        // $collection = new CollectionModel();
+
+        // $collection_data = $collection->first();
+
+        // $update_collection = [
+        //     'interest' => $collection_data['interest'] + $interest,
+        //     'savings' => $collection_data['savings'] + $savings,
+        //     'LRF' => $collection_data['LRF'] + $LRF,
+        //     'damayan' => $collection_data['damayan'] + $damayan
+        // ];
+
+        // $collection->update(1, $update_collection);
+
         return redirect('lending/loan')->with('status','Loan created successfully!');
     }
 
@@ -172,6 +185,9 @@ class LoanController extends BaseController
         $loan_amount = $this->request->getPost('loan_amount');
         $loan_date = $this->request->getPost('loan_date');
         $custno = $this->request->getPost('custno');
+
+        // get data before updating loan entry
+        $old_loan_data = $loan->find($loan_id);
 
         // make constants in future
         $service_fee = $loan_amount * 0.058; // loan amount x 5.8%
@@ -256,6 +272,20 @@ class LoanController extends BaseController
 
             $scheduled_payments->save($sPayment_data);
         }
+
+        /** Add in collection entry */
+        // $collection = new CollectionModel();
+
+        // $collection_data = $collection->first();
+
+        // $update_collection = [
+        //     'interest' => $collection_data['interest'] + $interest - $old_loan_data['interest'],
+        //     'savings' => $collection_data['savings'] + $savings - $old_loan_data['savings'],
+        //     'LRF' => $collection_data['LRF'] + $LRF - $old_loan_data['lrf'],
+        //     'damayan' => $collection_data['damayan'] + $damayan - $old_loan_data['damayan']
+        // ];
+
+        // $collection->update(1, $update_collection);
         
         return redirect('lending/loan')->with('status','Loan updated successfully!');
 

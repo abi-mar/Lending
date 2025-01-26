@@ -46,6 +46,11 @@ $routes->get('lending/payment/getPaymentsByBatch', 'PaymentController::getRecord
 $routes->get('lending/report', 'ReportController::index', ['filter' => 'authFilter']);
 $routes->get('lending/report/generate', 'ReportController::generateReport', ['filter' => 'authFilter']);
 
+// Withdraw routes
+$routes->get('lending/withdraw', 'WithdrawController::index', ['filter' => 'authFilter']);
+// $routes->get('lending/withdraw/create', 'WithdrawController::create', ['filter' => 'authFilter']);
+$routes->post('lending/withdraw/doWithdraw', 'WithdrawController::withdraw', ['filter' => 'authFilter']);
+
 
 // Groups
 // $routes->group('lending/loan', function ($routes) {
