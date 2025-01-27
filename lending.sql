@@ -204,7 +204,8 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `username`, `password`, `date_added`, `date_modified`) VALUES
-(4, 'abe', '$2y$10$9QJyV8Gmv0fSNN2MByylOO.bKWyVmRb4BG4LEvCzDtzhHD3J2THa2', '2024-12-25 09:50:25', '2024-12-25 09:50:25');
+(4, 'abe', '$2y$10$9QJyV8Gmv0fSNN2MByylOO.bKWyVmRb4BG4LEvCzDtzhHD3J2THa2', '2024-12-25 09:50:25', '2024-12-25 09:50:25'),
+(5, 'guest', '$2y$10$ehPLp4jW4rJ6Y7au2DNqauXZABUIwLKwbmlGjpEZeZDDY1NYcczOm', '2025-01-27 11:28:57', '2025-01-27 11:28:57');
 
 --
 -- Indexes for dumped tables
