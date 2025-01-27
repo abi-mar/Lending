@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\CollectionModel;
+use App\Models\LogsModel;
 
 class WithdrawController extends BaseController {    
 
@@ -45,28 +46,82 @@ class WithdrawController extends BaseController {
             }
 
             $update['interest'] = $collection_data['interest'] - $amt;    
-            $loan->update(1, $update);
+            $collection->update(1, $update);
+
+            // add in logs
+            $logs = new LogsModel();
+
+            $logs_data = [                
+                'notes' => '[WITHDRAW interest] '.
+                        '; [amount] ' . $amt.
+                        '; [Old interest balance] ' . $collection_data['interest'].
+                        '; [New interest balance] ' . $collection_data['interest'] - $amt,
+                'added_by' => session()->get('username')
+            ];
+
+            $logs->save($logs_data);
         } else if ($src == 'LRF') {
             if ($amt > $collection_data['LRF']) {
                 return redirect('lending/withdraw')->with('error','Insufficient balance.');
             }
 
             $update['LRF'] = $collection_data['LRF'] - $amt;    
-            $loan->update(1, $update);
+            $collection->update(1, $update);
+
+            // add in logs
+            $logs = new LogsModel();
+
+            $logs_data = [                
+                'notes' => '[WITHDRAW LRF] '.
+                        '; [amount] ' . $amt.
+                        '; [Old LRF balance] ' . $collection_data['LRF'].
+                        '; [New LRF balance] ' . $collection_data['LRF'] - $amt,
+                'added_by' => session()->get('username')
+            ];
+
+            $logs->save($logs_data);
         } else if ($src == 'savings') {
             if ($amt > $collection_data['savings']) {
                 return redirect('lending/withdraw')->with('error','Insufficient balance.');
             }
             
-            $update['LRF'] = $collection_data['LRF'] - $amt;    
-            $loan->update(1, $update);
+            $update['savings'] = $collection_data['savings'] - $amt;    
+            $collection->update(1, $update);
+
+            // add in logs
+            $logs = new LogsModel();
+
+            $logs_data = [                
+                'notes' => '[WITHDRAW SAVINGS] '.
+                        '; [amount] ' . $amt.
+                        '; [Old savings balance] ' . $collection_data['savings'].
+                        '; [New savings balance] ' . $collection_data['savings'] - $amt,
+                'added_by' => session()->get('username')
+            ];
+
+            $logs->save($logs_data);
         } else if ($src == 'damayan') {
             if ($amt > $collection_data['damayan']) {
                 return redirect('lending/withdraw')->with('error','Insufficient balance.');
             }
             
-            $update['damayan'] = $collection_data['damayan'] - $amt;    
-            $loan->update(1, $update);
+            $update['damayan'] = $collection_data['damayan'] - $amt;
+
+            $collection->update(1, $update);
+
+            // add in logs
+            $logs = new LogsModel();
+
+            $logs_data = [                
+                'notes' => '[WITHDRAW DAMAYAN] '.
+                        '; [amount] ' . $amt.
+                        '; [Old Damayan balance] ' . $collection_data['damayan'].
+                        '; [New Damayan balance] ' . $collection_data['damayan'] - $amt,
+                'added_by' => session()->get('username')
+            ];
+
+            $logs->save($logs_data);
+
         }        
 
         // display new data
