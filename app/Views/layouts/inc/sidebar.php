@@ -57,6 +57,6 @@
         <a href="<?= base_url('lending/loan') ?>" <?= (isset($pageTitle) && $pageTitle=='Loans') ? 'class="active"' : ''?>>Loans</a>
         <a href="<?= base_url('lending/payment') ?>" <?= (isset($pageTitle) && $pageTitle=='Payments') ? 'class="active"' : ''?>>Payments</a>
         <a href="<?= base_url('lending/report') ?>" <?= (isset($pageTitle) && $pageTitle=='Reports') ? 'class="active"' : ''?>>Reports</a>
-        <a href="<?= base_url('lending/withdraw') ?>" <?= (isset($pageTitle) && $pageTitle=='Withdraw') ? 'class="active"' : ''?>>Withdraw</a>
+        <!--a href="<?= base_url('lending/withdraw') ?>" <?= (isset($pageTitle) && $pageTitle=='Withdraw') ? 'class="active"' : ''?>>Withdraw</a-->
         <a href="<?= base_url('lending/logout') ?>">Logout</a>
 </div>
