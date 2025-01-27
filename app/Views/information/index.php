@@ -92,7 +92,7 @@
                 var info = response.info;
                 for (var key in info) {
                     var formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });                    
-                    table.row.add(['<b>' + formattedKey + ':</b>', info[key]]);
+                    table.row.add(['<b>' + formattedKey + ':</b>', parseFloat(info[key]).toFixed(2)]);
                 }
 
                 table.draw();

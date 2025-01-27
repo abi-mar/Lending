@@ -24,7 +24,7 @@
                         </thead>
                         <tbody>
                         <?php foreach ($info as $key => $value): ?>
-                            <tr><td><strong><?= ucfirst(str_replace('_', ' ', $key)) ?>:</strong></td><td> <?= $value ?> </td></tr>
+                            <tr><td><strong><?= ucfirst(str_replace('_', ' ', $key)) ?>:</strong></td><td> <?= is_numeric($value) ? number_format($value, 2) : $value ?> </td></tr>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
