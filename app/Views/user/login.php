@@ -73,7 +73,7 @@
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-block">Login</button>
-                            <p class="text-center">Don't have account? <a href="<?php echo base_url('lending/register'); ?>">Register here</a><p>
+                            <!-- <p class="text-center">Don't have account? <a href="<?php echo base_url('lending/register'); ?>">Register here</a></p> -->
                         </div>
                     </form>
                 </div>
