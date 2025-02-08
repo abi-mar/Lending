@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 26, 2025 at 11:50 AM
+-- Generation Time: Feb 08, 2025 at 03:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -22,6 +22,29 @@ SET time_zone = "+00:00";
 --
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `account_officer`
+--
+
+CREATE TABLE `account_officer` (
+  `row_id` int(11) NOT NULL,
+  `firstname` varchar(100) DEFAULT NULL,
+  `middlename` varchar(100) DEFAULT NULL,
+  `surname` varchar(100) DEFAULT NULL,
+  `date_added` datetime NOT NULL DEFAULT current_timestamp(),
+  `added_by` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `account_officer`
+--
+
+INSERT INTO `account_officer` (`row_id`, `firstname`, `middlename`, `surname`, `date_added`, `added_by`) VALUES
+(1, 'Topher', NULL, NULL, '2025-02-08 19:59:30', 'abe'),
+(2, 'Denmark', NULL, NULL, '2025-02-08 19:59:30', 'abe'),
+(3, 'Calvin', NULL, NULL, '2025-02-08 20:00:07', 'abe'),
+(4, 'Gilbert', NULL, NULL, '2025-02-08 20:00:07', 'abe');
 
 --
 -- Table structure for table `collection`
@@ -88,6 +111,8 @@ CREATE TABLE `customer` (
   `suffix` varchar(10) DEFAULT NULL,
   `address` varchar(100) DEFAULT NULL,
   `mobileno` varchar(20) DEFAULT NULL,
+  `groupno` int(11) DEFAULT NULL COMMENT 'client group where it belongs. Can be null if client does not belong to a group.',
+  `account_officer_id` int(11) NOT NULL COMMENT 'account_officer_row_id',
   `image` varchar(100) DEFAULT NULL,
   `date_added` datetime NOT NULL DEFAULT current_timestamp(),
   `added_by` varchar(50) NOT NULL,
@@ -95,9 +120,20 @@ CREATE TABLE `customer` (
   `balance` decimal(15,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `customer`
+-- Table structure for table `groupx`
 --
+
+CREATE TABLE `groupx` (
+  `groupno` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `date_added` datetime NOT NULL DEFAULT current_timestamp(),
+  `added_by` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 -- --------------------------------------------------------
 
@@ -127,10 +163,6 @@ CREATE TABLE `loan_record` (
   `modified_by` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `loan_record`
---
-
 -- --------------------------------------------------------
 
 --
@@ -143,11 +175,6 @@ CREATE TABLE `logs` (
   `date_added` datetime NOT NULL DEFAULT current_timestamp(),
   `added_by` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `logs`
---
-
 
 -- --------------------------------------------------------
 
@@ -184,7 +211,6 @@ CREATE TABLE `scheduled_payment` (
 --
 -- Dumping data for table `scheduled_payment`
 --
-
 -- --------------------------------------------------------
 
 --
@@ -212,6 +238,12 @@ INSERT INTO `user` (`id`, `username`, `password`, `date_added`, `date_modified`)
 --
 
 --
+-- Indexes for table `account_officer`
+--
+ALTER TABLE `account_officer`
+  ADD PRIMARY KEY (`row_id`);
+
+--
 -- Indexes for table `collection`
 --
 ALTER TABLE `collection`
@@ -223,6 +255,12 @@ ALTER TABLE `collection`
 ALTER TABLE `customer`
   ADD PRIMARY KEY (`custno`),
   ADD UNIQUE KEY `custno` (`custno`);
+
+--
+-- Indexes for table `groupx`
+--
+ALTER TABLE `groupx`
+  ADD PRIMARY KEY (`groupno`);
 
 --
 -- Indexes for table `loan_record`
@@ -255,6 +293,12 @@ ALTER TABLE `user`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `account_officer`
+--
+ALTER TABLE `account_officer`
+  MODIFY `row_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `collection`
