@@ -41,6 +41,9 @@ $routes->get('lending/payment/make', 'PaymentController::makePayment', ['filter'
 $routes->get('lending/payment/make/(:num)', 'PaymentController::makePaymentPerLoan/$1', ['filter' => 'authFilter']);
 $routes->post('lending/payment/add', 'PaymentController::add', ['filter' => 'authFilter']);
 $routes->get('lending/payment/getPaymentsByBatch', 'PaymentController::getRecordsByBatch', ['filter' => 'authFilter']);
+$routes->get('lending/payment/pendingPayments', 'PaymentController::showPendingPayments', ['filter' => 'authFilter']);
+$routes->get('lending/payment/getPendingPayPerDay/(:any)', 'PaymentController::getPendingPaymentsForDay/$1', ['filter' => 'authFilter']);
+
 
 // Report routes
 $routes->get('lending/report', 'ReportController::index', ['filter' => 'authFilter']);
