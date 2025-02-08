@@ -4,17 +4,18 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\LoanModel;
+use App\Models\ScheduledPaymentModel;
+use App\Models\AccountOfficerModel;
+use App\Models\CustomerModel;
 
 class ReportController extends BaseController {    
 
-    public function index() {
-        $data['pageTitle'] = 'Reports';
-        return view('information/index', $data);
+    public function getSummary() {
+        $data['pageTitle'] = 'SummaryDR';
+        return view('report/summary', $data);
     }
 
     public function generateReport(): string {
-        $data['pageTitle'] = 'Reports';
-
         $dateFrom = $this->request->getGet('dateFrom');
         $dateTo = $this->request->getGet('dateTo');
 
@@ -111,5 +112,59 @@ class ReportController extends BaseController {
 
             return json_encode($data);
         }
+    }
+
+    /**[START] PENDING PAYMENTS */
+
+    public function showPendingPayments () {
+        $data['pageTitle'] = 'Pending Payments';
+        
+        return view('report/pending_payments', $data);
+    }
+
+    public function getPendingPaymentsForDay($day): string {
+        $dayOfWeek = strtolower($day);
+        $daysOfWeek = ['sunday','monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        if ($dayOfWeek < 0 || $dayOfWeek > 7) {
+            return json_encode(['error' => 'Invalid day of the week:'.$day]);
+        }
+
+        $today = new \DateTime();
+        $today->setISODate($today->format('o'), $today->format('W'), $day);
+        $date = $today->format('Y-m-d');
+
+        $sPayment = new ScheduledPaymentModel();
+        $sPayment->select('groupx.name, customer.surname, customer.firstname, customer.middlename, customer.address, loan_record.weekly_amortization');
+        $sPayment->join('loan_record', 'loan_record.row_id = scheduled_payment.loan_record_row_id');
+        $sPayment->join('customer', 'customer.custno = loan_record.custno');
+        $sPayment->join('groupx', 'customer.groupno = groupx.groupno', 'left');
+        $sPayment->where('scheduled_date', $date);
+        // $sPayment->limit(1000, 1); // page 2 is offset 1000
+        $sPayment->orderBy('customer.surname', 'DESC');
+        
+        $data = $sPayment->findAll();
+        return json_encode($data);
+    }
+
+    /**[END] PENDING PAYMENTS */
+
+    
+    public function showCustomerPerAO () {
+        $data['pageTitle'] = 'Account Officers';
+
+        $accountOfficer = new AccountOfficerModel();
+
+        $data['accountOfficers'] = $accountOfficer->findAll();
+        
+        return view('report/account_officers', $data);
+    }
+
+    public function getCustomersPerAo($accountOfficersId): string {
+        $customer = new CustomerModel();
+        $customer->where('account_officer_id', $accountOfficersId);
+        $customer->orderBy('surname', 'DESC');
+        $data = $customer->findAll();
+        return json_encode($data);
     }
 }

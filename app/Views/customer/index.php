@@ -30,6 +30,8 @@
                                 <th>Address</th>
                                 <th>Mobile #</th>
                                 <th>Balance</th>
+                                <th>Account Officer</th>
+                                <th>Group</th>
                                 <th>Action</th>                                
                             </tr>
                         </thead>
@@ -44,6 +46,9 @@
                                     <td><?php echo $row['address']; ?></td>
                                     <td><?php echo $row['mobileno']; ?></td>
                                     <td><?php echo $row['balance']; ?></td>
+                                    <td><?php echo $row['account_officer']; ?></td>
+                                    <td><?php echo $row['group_name']; ?></td>                                    
+
                                     <td>
                                         <a href="<?= base_url('lending/customer/edit/'.$row['custno']) ?>" class="btn btn-primary btn-sm">Edit</a>
                                         <!--a href="<?= base_url('lending/customer/delete/'.$row['custno']) ?>" class="btn btn-danger btn-sm">Delete</a-->

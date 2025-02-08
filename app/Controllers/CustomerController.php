@@ -5,12 +5,17 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\CustomerModel;
 use App\Models\LogsModel;
+use App\Models\AccountOfficerModel;
+use App\Models\GroupModel;
 
 class CustomerController extends BaseController {
     protected $helpers = ['form'];
 
     public function index(): string {
         $customer = new CustomerModel();
+        $customer->select('customer.*, CONCAT_WS(\'\', account_officer.firstname, account_officer.surname) as account_officer, groupx.name as group_name');
+        $customer->join('account_officer', 'account_officer.row_id = customer.account_officer_id');
+        $customer->join('groupx', 'groupx.groupno = customer.groupno', 'left');
         $customer->orderBy('balance, date_modified', 'DESC');
         $customer->limit(1000);
         $data['customers'] = $customer->findAll();
@@ -27,7 +32,13 @@ class CustomerController extends BaseController {
     }
 
     public function create() {
-        return view('customer/create');
+        $accountOfficer = new AccountOfficerModel();
+        $data['accountOfficers'] = $accountOfficer->findAll();
+
+        $group = new GroupModel();
+        $data['groups'] = $group->findAll();
+        
+        return view('customer/create', $data);
     }
 
     // insert record on customer table
@@ -64,6 +75,8 @@ class CustomerController extends BaseController {
                 'suffix' => $this->request->getPost('suffix'),
                 'address' => $this->request->getPost('address'),
                 'mobileno' => $this->request->getPost('mobileno'),
+                'groupno' => $this->request->getPost('group') == '' ? null : $this->request->getPost('group'),
+                'account_officer_id' => $this->request->getPost('account_officer'),
                 'image' => $imageName,
                 'added_by' => session()->get('username')
             ];
@@ -80,7 +93,9 @@ class CustomerController extends BaseController {
             '; [surname] ' . $this->request->getPost('surname') . 
             '; [suffix] ' . $this->request->getPost('suffix') . 
             '; [address] ' . $this->request->getPost('address') . 
-            '; [mobileno] ' . $this->request->getPost('mobileno');
+            '; [mobileno] ' . $this->request->getPost('mobileno') . 
+            '; [groupno] ' . $this->request->getPost('group') .
+            '; [account_officer_id] ' . $this->request->getPost('account_officer');
 
             $logs_data['added_by'] = session()->get('username');
 
@@ -91,11 +106,18 @@ class CustomerController extends BaseController {
     }
 
     // Redirect to Edit page
-    public function edit($custno = null) {
-        echo $custno;
+    public function edit($custno = null) {             
         $customer = new CustomerModel();
-
+        $customer->select('customer.*, CONCAT_WS(\'\', account_officer.firstname, account_officer.surname) as account_officer, groupx.name as group_name');
+        $customer->join('account_officer', 'account_officer.row_id = customer.account_officer_id');
+        $customer->join('groupx', 'groupx.groupno = customer.groupno', 'left');
         $data['customer'] = $customer->find($custno);
+
+        $accountOfficer = new AccountOfficerModel();
+        $data['accountOfficers'] = $accountOfficer->findAll();
+
+        $group = new GroupModel();
+        $data['groups'] = $group->findAll();
 
         return view('customer/edit.php', $data);
     }
@@ -128,6 +150,8 @@ class CustomerController extends BaseController {
             'suffix' => $this->request->getPost('suffix'),
             'address' => $this->request->getPost('address'),
             'mobileno' => $this->request->getPost('mobileno'),
+            'groupno' => $this->request->getPost('group') == '' ? null : $this->request->getPost('group'),
+            'account_officer_id' => $this->request->getPost('account_officer'),
             'image' => $imageName
         ];
 
@@ -142,7 +166,10 @@ class CustomerController extends BaseController {
         '; [surname] ' . $this->request->getPost('surname') . 
         '; [suffix] ' . $this->request->getPost('suffix') . 
         '; [address] ' . $this->request->getPost('address') . 
-        '; [mobileno] ' . $this->request->getPost('mobileno');
+        '; [mobileno] ' . $this->request->getPost('mobileno') .
+        '; [groupno] ' . $this->request->getPost('group') .
+        '; [account_officer_id] ' . $this->request->getPost('account_officer')
+        ;
 
         $logs_data['added_by'] = session()->get('username');
 

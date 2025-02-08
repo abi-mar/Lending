@@ -56,8 +56,15 @@
         <a href="<?= base_url('lending/customer') ?>" <?= (isset($pageTitle) && $pageTitle=='Customers') ? 'class="active"' : ''?>>Customers</a>
         <a href="<?= base_url('lending/loan') ?>" <?= (isset($pageTitle) && $pageTitle=='Loans') ? 'class="active"' : ''?>>Loans</a>
         <a href="<?= base_url('lending/payment') ?>" <?= (isset($pageTitle) && $pageTitle=='Payments') ? 'class="active"' : ''?>>Payments</a>
-        <a href="<?= base_url('lending/report') ?>" <?= (isset($pageTitle) && $pageTitle=='Reports') ? 'class="active"' : ''?>>Reports</a>
-        <a href="<?= base_url('lending/payment/pendingPayments') ?>" <?= (isset($pageTitle) && $pageTitle=='Pending Payments') ? 'class="active"' : ''?>>Pending Payments</a>
+        <a href="<?= base_url('lending/group') ?>" <?= (isset($pageTitle) && $pageTitle=='Groups') ? 'class="active"' : ''?>>Groups</a>
+        <div class="sidebar-category">
+            <h5>Reports</h5>
+            <a href="<?= base_url('lending/report/summary') ?>" <?= (isset($pageTitle) && $pageTitle=='SummaryDR') ? 'class="active"' : ''?>>Summary (Date Range)</a>
+            <a href="<?= base_url('lending/report/pendingPayments') ?>" <?= (isset($pageTitle) && $pageTitle=='Pending Payments') ? 'class="active"' : ''?>>Pending Payments</a>
+            <a href="<?= base_url('lending/report/accountOfficers') ?>" <?= (isset($pageTitle) && $pageTitle=='Account Officers') ? 'class="active"' : ''?>>Account Officers</a>
+        </div>
+        
         <!--a href="<?= base_url('lending/withdraw') ?>" <?= (isset($pageTitle) && $pageTitle=='Withdraw') ? 'class="active"' : ''?>>Withdraw</a-->
         <a href="<?= base_url('lending/logout') ?>">Logout</a>
+        
 </div>

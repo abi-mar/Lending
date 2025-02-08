@@ -41,6 +41,26 @@
                             <input type="text" name="mobileno" class="form-control" placeholder="Enter mobile no." required/>
                         </div>
                         <div class="form-group mb-2">
+                            <label> Account Officer <span style="color:red">*</span></label>
+                            <select name="account_officer" class="form-control" required>
+                                <option value="">Select Account Officer</option>
+                                <?php foreach($accountOfficers as $officer): 
+                                    $name =  $officer['firstname'] . ' ' . $officer['surname'];
+                                    ?>
+                                    <option value="<?= $officer['row_id']; ?>"><?= $name; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label> Group </label>
+                            <select name="group" class="form-control">
+                                <option value="">Select Group</option>
+                                <?php foreach($groups as $group): ?>
+                                    <option value="<?= $group['groupno']; ?>"><?= $group['name']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
                             <label> Picture <span style="color:red">*</span></label>
                             <input type="file" name="image" class="form-control"/>                                        
                         </div>

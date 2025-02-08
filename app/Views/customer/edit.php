@@ -43,6 +43,28 @@
                             <input type="text" name="mobileno" class="form-control" placeholder="Enter mobile no." value="<?= $customer['mobileno']?>" required/>
                         </div>
                         <div class="form-group mb-2">
+                            <label> Account Officer </label>
+                            <select name="account_officer" class="form-control" required> 
+                                <option value="">Select Account Officer</option>
+                                <?php foreach($accountOfficers as $officer): ?>
+                                    <option value="<?= $officer['row_id']; ?>" <?= $customer['account_officer_id'] == $officer['row_id'] ? 'selected' : '' ?>>
+                                        <?= $officer['firstname']. ' ' . $officer['surname']; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label> Group </label>                            
+                            <select name="group" class="form-control" required>
+                            <option value="">Select Group</option>
+                            <?php foreach($groups as $group): ?>
+                                <option value="<?= $group['groupno']; ?>" <?= $customer['groupno'] == $group['groupno'] ? 'selected' : '' ?>>
+                                    <?= $group['name']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        </div>
+                        <div class="form-group mb-2">
                             <label> Picture </label>
                             <input type="file" name="image" class="form-control" value="<?= $customer['image']?>" />                                        
                         </div>

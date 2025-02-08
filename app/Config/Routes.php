@@ -41,13 +41,22 @@ $routes->get('lending/payment/make', 'PaymentController::makePayment', ['filter'
 $routes->get('lending/payment/make/(:num)', 'PaymentController::makePaymentPerLoan/$1', ['filter' => 'authFilter']);
 $routes->post('lending/payment/add', 'PaymentController::add', ['filter' => 'authFilter']);
 $routes->get('lending/payment/getPaymentsByBatch', 'PaymentController::getRecordsByBatch', ['filter' => 'authFilter']);
-$routes->get('lending/payment/pendingPayments', 'PaymentController::showPendingPayments', ['filter' => 'authFilter']);
-$routes->get('lending/payment/getPendingPayPerDay/(:any)', 'PaymentController::getPendingPaymentsForDay/$1', ['filter' => 'authFilter']);
+
 
 
 // Report routes
-$routes->get('lending/report', 'ReportController::index', ['filter' => 'authFilter']);
+$routes->get('lending/report/summary', 'ReportController::getSummary', ['filter' => 'authFilter']);
 $routes->get('lending/report/generate', 'ReportController::generateReport', ['filter' => 'authFilter']);
+$routes->get('lending/report/pendingPayments', 'ReportController::showPendingPayments', ['filter' => 'authFilter']);
+$routes->get('lending/report/getPendingPayPerDay/(:any)', 'ReportController::getPendingPaymentsForDay/$1', ['filter' => 'authFilter']);
+$routes->get('lending/report/accountOfficers', 'ReportController::showCustomerPerAO', ['filter' => 'authFilter']);
+$routes->get('lending/report/getCustomersPerAo/(:num)', 'ReportController::getCustomersPerAo/$1', ['filter' => 'authFilter']);
+
+// Group routes
+$routes->get('lending/group', 'GroupController::index', ['filter' => 'authFilter']);
+$routes->get('lending/group/create', 'GroupController::create', ['filter' => 'authFilter']);
+$routes->post('lending/group/add', 'GroupController::add', ['filter' => 'authFilter']);
+
 
 // Withdraw routes
 $routes->get('lending/withdraw', 'WithdrawController::index', ['filter' => 'authFilter']);

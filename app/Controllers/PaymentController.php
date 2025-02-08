@@ -213,35 +213,7 @@ class PaymentController extends BaseController
         return json_encode($data);
     }
 
-    public function showPendingPayments () {
-        $data['pageTitle'] = 'Pending Payments';
-        
-        return view('payment/pending_payments', $data);
-    }
-
-    public function getPendingPaymentsForDay($day): string {
-        $dayOfWeek = strtolower($day);
-        $daysOfWeek = ['sunday','monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-
-        if (!in_array($dayOfWeek, $daysOfWeek)) {
-            return json_encode(['error' => 'Invalid day of the week']);
-        }
-
-        $today = new \DateTime();
-        $today->setISODate($today->format('o'), $today->format('W'), array_search($dayOfWeek, $daysOfWeek) + 1);
-        $date = $today->format('Y-m-d');
-
-        $sPayment = new ScheduledPaymentModel();
-        $sPayment->select('customer.surname, customer.firstname, customer.middlename, customer.address, loan_record.weekly_amortization');
-        $sPayment->join('loan_record', 'loan_record.row_id = scheduled_payment.loan_record_row_id');
-        $sPayment->join('customer', 'customer.custno = loan_record.custno');
-        $sPayment->where('scheduled_date', $date);
-        $sPayment->limit(1000, 1); // page 2 is offset 1000
-        $sPayment->orderBy('customer.surname', 'DESC');
-        
-        $data = $sPayment->findAll();
-        return json_encode($data);
-    }
+    
 
     // Redirect to Edit page
     // public function edit($custno = null) {
