@@ -20,7 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `lending`
 --
-USE `lending2`;
+USE `lending`;
 
 -- --------------------------------------------------------
 
