@@ -22,7 +22,8 @@ SET time_zone = "+00:00";
 --
 
 -- --------------------------------------------------------
-
+CREATE DATABASE IF NOT EXISTS `lending` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `lending`;
 --
 -- Table structure for table `account_officer`
 --
