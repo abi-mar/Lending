@@ -140,6 +140,7 @@ class ReportController extends BaseController {
         $sPayment->join('customer', 'customer.custno = loan_record.custno');
         $sPayment->join('groupx', 'customer.groupno = groupx.groupno', 'left');
         $sPayment->where('scheduled_date', $date);
+        $sPayment->where('is_paid', 0);
         // $sPayment->limit(1000, 1); // page 2 is offset 1000
         $sPayment->orderBy('customer.surname', 'DESC');
         

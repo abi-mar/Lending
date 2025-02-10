@@ -191,7 +191,7 @@ class PaymentController extends BaseController
             'notes' => '[COLLECTION ADDED]'. 
             ' [interest] '. $collection_data['interest'] + ($loanRow['interest'] / 13).
             '; [savings] '. $collection_data['savings'] + ($loanRow['savings'] / 13).
-            '; [LRF] '. $collection_data['LRF'] + ($loanRow['LRF'] / 13).
+            '; [LRF] '. $collection_data['LRF'] + ($loanRow['lrf'] / 13).
             '; [damayan] '. $collection_data['damayan'] + ($loanRow['damayan'] / 13),
             'added_by' => session()->get('username')
         ];
