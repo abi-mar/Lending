@@ -121,7 +121,9 @@
 <!-- Initialize DataTables -->
 <script>
     $(document).ready(function() {
-        $('#PaymentsPerLoanTable').DataTable();
+        $('#PaymentsPerLoanTable').DataTable({
+            "pageLength": 25 // initial entries per page is 25
+        });
         $('#PaymentsTable').DataTable();
     });
 </script>
