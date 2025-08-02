@@ -47,6 +47,12 @@ $routes->get('lending/payment/getPaymentsByBatch', 'PaymentController::getRecord
 // Report routes
 $routes->get('lending/report/summary', 'ReportController::getSummary', ['filter' => 'authFilter']);
 $routes->get('lending/report/generate', 'ReportController::generateReport', ['filter' => 'authFilter']);
+$routes->get('lending/report/collectionPerOfficer', 'ReportController::showCollectionPerOfficer', ['filter' => 'authFilter']);
+$routes->get('lending/report/getCollectionPerOfficer/(:num)/(:any)', 'ReportController::getCollectionPerOfficer/$1/$2', ['filter' => 'authFilter']);
+$routes->post('lending/report/exportCollectionPerOfficer', 'ReportController::exportCollectionPerOfficerToExcel', ['filter' => 'authFilter']);
+
+
+// current not used
 $routes->get('lending/report/pendingPayments', 'ReportController::showPendingPayments', ['filter' => 'authFilter']);
 $routes->get('lending/report/getPendingPayPerDay/(:any)', 'ReportController::getPendingPaymentsForDay/$1', ['filter' => 'authFilter']);
 $routes->get('lending/report/accountOfficers', 'ReportController::showCustomerPerAO', ['filter' => 'authFilter']);
