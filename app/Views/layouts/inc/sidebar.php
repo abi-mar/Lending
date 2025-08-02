@@ -60,7 +60,8 @@
         <div class="sidebar-category">
             <h5>Reports</h5>
             <a href="<?= base_url('lending/report/summary') ?>" <?= (isset($pageTitle) && $pageTitle=='SummaryDR') ? 'class="active"' : ''?>>Summary (Date Range)</a>
-            <a href="<?= base_url('lending/report/pendingPayments') ?>" <?= (isset($pageTitle) && $pageTitle=='Pending Payments') ? 'class="active"' : ''?>>Pending Payments</a>
+            <a href="<?= base_url('lending/report/collectionPerOfficer') ?>" <?= (isset($pageTitle) && $pageTitle=='Collections') ? 'class="active"' : ''?>>Collections</a>
+            <!--a href="<?= base_url('lending/report/pendingPayments') ?>" <?= (isset($pageTitle) && $pageTitle=='Pending Payments') ? 'class="active"' : ''?>>Pending Payments</a-->
             <a href="<?= base_url('lending/report/accountOfficers') ?>" <?= (isset($pageTitle) && $pageTitle=='Account Officers') ? 'class="active"' : ''?>>Account Officers</a>
         </div>
         
