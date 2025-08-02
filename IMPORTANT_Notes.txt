@@ -1,0 +1,6 @@
+Install spreadsheet
+1. composer require phpoffice/phpspreadsheet
+
+Uncomment in php.ini file before installing spreadsheet required package/import
+1. extension=gd
+2. extension=zip
