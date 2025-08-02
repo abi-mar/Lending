@@ -20,6 +20,9 @@
                     </div>
 
                 <div class="card-body">
+                    <div class="alert alert-primary" role="alert">
+                        <strong>Info:</strong> Only customers still with loan balance will be displayed.
+                    </div>
                     <ul class="nav nav-tabs" id="aoTabs" role="tablist">
                     <?php 
                         // $accountOfficers = ['AO1', 'AO2', 'AO3', 'AO4', 'AO5', 'AO6', 'AO7', 'AO8', 'AO9', 'AO10'];
@@ -48,7 +51,9 @@
                                     <th>Name</th>
                                     <th>Address</th>
                                     <th>Mobile #</th>
-                                    <th>Balance</th>                               
+                                    <th>Loan Amount</th>
+                                    <th>Loan Balance</th>
+                                    <th>Total Payments</th>
                                 </tr>
                             </thead>
                             <tbody>                           
@@ -81,7 +86,9 @@
                     name,                            
                     info.address,
                     info.mobileno,
-                    info.balance
+                    info.loan_amount,
+                    info.balance,
+                    info.amount_topay - info.balance // original amount to pay - balance
                 ]).draw();
             });
         });
@@ -114,7 +121,9 @@
                             name,                            
                             info.address,
                             info.mobileno,
-                            info.balance
+                            info.loan_amount,
+                            info.balance,
+                            info.amount_topay - info.balance // original amount to pay - balance
                         ]).draw();
                     });
                 });
