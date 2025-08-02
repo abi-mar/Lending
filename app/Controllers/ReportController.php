@@ -7,6 +7,8 @@ use App\Models\LoanModel;
 use App\Models\ScheduledPaymentModel;
 use App\Models\AccountOfficerModel;
 use App\Models\CustomerModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ReportController extends BaseController {    
 
@@ -113,8 +115,171 @@ class ReportController extends BaseController {
             return json_encode($data);
         }
     }
+    /**[START] Collection Per Officer Report */
 
-    /**[START] PENDING PAYMENTS */
+    public function showCollectionPerOfficer () {
+        $data['pageTitle'] = 'Collections';
+
+        $data['accountOfficers'] = (new AccountOfficerModel())->findAll();
+        
+        return view('report/collectionPerOfficer', $data);
+    }
+
+    public function getCollectionPerOfficer($accountOfficersId, $collectionDate): string {
+        $scheduledPayment = new ScheduledPaymentModel();
+
+        $scheduledPayment->select('(
+            SELECT s2.amount
+            FROM scheduled_payment s2
+            WHERE s2.row_id < scheduled_payment.row_id AND scheduled_payment.loan_record_row_id = s2.loan_record_row_id        
+            ORDER BY s2.row_id
+            LIMIT 1
+        ) AS previous_amount');
+
+        $scheduledPayment->select('(
+            SELECT SUM(s2.remaining_debt)
+            FROM scheduled_payment s2
+            WHERE s2.row_id < scheduled_payment.row_id AND scheduled_payment.loan_record_row_id = s2.loan_record_row_id        
+            ORDER BY s2.row_id        
+        ) AS DQ');
+        
+        $scheduledPayment->select("CONCAT(customer.surname, ', ', customer.firstname, ' ', customer.middlename) as client_name");
+        $scheduledPayment->select('customer.custno, loan_record.weekly_amortization, loan_record.savings, loan_record.balance, scheduled_payment.remaining_debt, scheduled_payment.weekno');
+        $scheduledPayment->join('loan_record', 'loan_record.row_id = scheduled_payment.loan_record_row_id');
+        $scheduledPayment->join('customer', 'customer.custno = loan_record.custno');
+        if ($accountOfficersId != 0) {
+            $scheduledPayment->where('customer.account_officer_id', $accountOfficersId);
+        }
+        $scheduledPayment->where('scheduled_payment.scheduled_date', $collectionDate);
+        $scheduledPayment->orderBy('customer.surname', 'DESC');
+
+        $data = $scheduledPayment->findAll();
+        return json_encode($data);
+    }
+
+    public function exportCollectionPerOfficerToExcel() {
+        $accountOfficersId = $this->request->getPost('account_officer');
+        $collectionDate = $this->request->getPost('collection_date');
+        $loan_cycle = $this->request->getPost('loan_cycle');
+        $accountOfficerName = $this->request->getPost('account_officer_name');
+        $lastWeek = $this->request->getPost('last_week');
+
+        $data = json_decode($this->getCollectionPerOfficer($accountOfficersId, $collectionDate), true);
+
+        $collectionDateStr = date('l, F j, Y', strtotime($collectionDate));
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Collection Per Officer');
+
+        // Set light green background color
+        // $sheet->getStyle('A1:Z1000')->applyFromArray([
+        //     'fill' => [
+        //         'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+        //         'startColor' => [
+        //             'argb' => 'FFCCFFCC',
+        //         ],
+        //     ],
+        // ]);
+
+        // Set Account Officer, Date Collection, Loan Cycle values
+        $sheet->setCellValue('B3', 'Account Officer:');
+        $sheet->setCellValue('C3', $accountOfficerName);
+        $sheet->setCellValue('B4', 'Date Collection:');
+        $sheet->setCellValue('C4', $collectionDateStr);
+        $sheet->setCellValue('B5', 'Loan Cycle:');
+        $sheet->setCellValue('C5', $loan_cycle);
+
+        // Set header to bold
+        $sheet->getStyle('B3:B5')->getFont()->setBold(true);
+
+        // Set header
+        $sheet->setCellValue('B8', 'Client ID');
+        $sheet->setCellValue('C8', 'Client Name');
+        $sheet->setCellValue('D8', 'Savings');        
+        $sheet->setCellValue('E8', 'Week No');
+        $sheet->setCellValue('F8', 'Loan Balance');
+        $sheet->setCellValue('G8', 'Delinquent (DQ)');
+        $sheet->setCellValue('H8', 'Current');
+        $sheet->setCellValue('I8', $lastWeek);        
+        $sheet->setCellValue('J8', 'Payment');
+
+        // Set header to bold
+        $sheet->getStyle('B8:J8')->getFont()->setBold(true);        
+
+        // Populate data
+        $row = 9;
+        foreach ($data as $item) {
+            $sheet->setCellValue('B' . $row, $item['custno']);            
+            $sheet->setCellValue('C' . $row, $item['client_name']);
+            $sheet->setCellValue('D' . $row, number_format($item['savings'], 2));
+            $sheet->setCellValue('E' . $row, $item['weekno']);
+            $sheet->setCellValue('F' . $row, number_format($item['balance'], 2));
+            $sheet->setCellValue('G' . $row, number_format($item['DQ'], 2));
+            $sheet->setCellValue('H' . $row, number_format($item['remaining_debt'], 2));
+            $sheet->setCellValue('I' . $row, number_format($item['previous_amount'], 2));
+            $sheet->setCellValue('J' . $row, '');
+            
+            $row++;
+        }
+
+        // Add total row
+        $sheet->setCellValue('B' . $row, 'Total');
+        $sheet->setCellValue('D' . $row, '=SUMPRODUCT(--SUBSTITUTE(D9:D' . ($row - 1) . ', ",", ""))');
+        $sheet->setCellValue('F' . $row, '=SUMPRODUCT(--SUBSTITUTE(F9:F' . ($row - 1) . ', ",", ""))');
+        $sheet->setCellValue('G' . $row, '=SUMPRODUCT(--SUBSTITUTE(G9:G' . ($row - 1) . ', ",", ""))');
+        $sheet->setCellValue('H' . $row, '=SUMPRODUCT(--SUBSTITUTE(H9:H' . ($row - 1) . ', ",", ""))');
+        $sheet->setCellValue('I' . $row, '=SUMPRODUCT(--SUBSTITUTE(I9:I' . ($row - 1) . ', ",", ""))');
+
+        // Format cells as currency
+        $sheet->getStyle('D9:D' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->getStyle('F9:F' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->getStyle('G9:G' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->getStyle('H9:H' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+        $sheet->getStyle('I9:I' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+
+        // Set cell borders for the whole table
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ];
+        $sheet->getStyle('B8:J' . $row)->applyFromArray($styleArray);
+
+        // Set yellow background color for total row
+        $sheet->getStyle('B' . $row . ':J' . $row)->applyFromArray([
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => 'FFFFFF00',
+                ],
+            ],
+        ]);
+
+        // Set total row to bold
+        $sheet->getStyle('B' . $row . ':J' . $row)->getFont()->setBold(true);
+
+        // Auto size columns based on cell value
+        foreach (range('B', 'J') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+            $sheet->getStyle($columnID . '1:' . $columnID . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+        }
+
+
+
+        $writer = new Xlsx($spreadsheet);        
+        $fileName = 'Collection_Per_Officer_' . $collectionDate . '_'. trim($accountOfficerName) . '_' . date('Ymd_His') . '.xlsx';
+        $filePath = 'C:/Users/' . getenv('USERNAME') . '/Downloads/' . $fileName;
+        $writer->save($filePath);
+
+        return json_encode(['file' => $filePath]);
+    }
+    /**[END] Collection Per Officer Report */
+
+    /**[START] PENDING PAYMENTS (Currently not used)*/
 
     public function showPendingPayments () {
         $data['pageTitle'] = 'Pending Payments';
@@ -163,7 +328,10 @@ class ReportController extends BaseController {
 
     public function getCustomersPerAo($accountOfficersId): string {
         $customer = new CustomerModel();
+        $customer->select('customer.custno, surname, firstname, middlename, suffix, address, mobileno, loan_record.loan_amount, customer.balance, loan_record.amount_topay');
+        $customer->join('loan_record', 'loan_record.custno = customer.custno');
         $customer->where('account_officer_id', $accountOfficersId);
+        $customer->where('loan_record.balance >', 0);
         $customer->orderBy('surname', 'DESC');
         $data = $customer->findAll();
         return json_encode($data);
