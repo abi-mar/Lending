@@ -152,6 +152,7 @@ class LoanController extends BaseController
             $weekly_date = date('Y-m-d', strtotime($loan_date . " +$i week"));
             $sPayment_data = [
                 'amount' => 0,
+                'weekno' => $i,
                 'date_paid' => NULL,
                 'scheduled_date' => $weekly_date,
                 'added_by' => NULL,
@@ -301,6 +302,7 @@ class LoanController extends BaseController
             $weekly_date = date('Y-m-d', strtotime($loan_date . " +$i week"));
             $sPayment_data = [
                 'amount' => 0,
+                'weekno' => $i,
                 'date_paid' => NULL,
                 'scheduled_date' => $weekly_date,
                 'added_by' => NULL,

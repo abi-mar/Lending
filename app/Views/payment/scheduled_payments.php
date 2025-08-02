@@ -44,6 +44,7 @@
                             <table id="PaymentsPerLoanTable" class="table table-striped">
                                 <thead>
                                     <tr>
+                                        <th>#</th>
                                         <th>Loan ID</th>
                                         <th>Date Paid</th>
                                         <th>Scheduled Payment</th>
@@ -56,6 +57,7 @@
                                     <?php if ($sPayments): ?>
                                         <?php foreach($sPayments as $row) : ?>
                                         <tr>
+                                            <td><?= $row['weekno']; ?></td>
                                             <td><?= $row['loan_record_row_id']; ?></td>
                                             <td><?= (isset($row['date_paid'])) ? $row['date_paid'] : '<span class="badge text-bg-secondary">N/A</span>'; ?></td>
                                             <td><?= $row['scheduled_date']; ?></td>
