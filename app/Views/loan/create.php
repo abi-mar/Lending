@@ -24,12 +24,12 @@
                     <form action="<?= base_url('lending/loan/add') ?>" method="POST" enctype="multipart/form-data">                        
                         <div class="form-group mb-2">
                             <label> Loan Amount <span style="color:red">*</span></label>
-                            <input type="text" name="loan_amount" class="form-control decimal" placeholder="Enter Amount to Borrow" required/>
+                            <input type="text" name="loan_amount" class="form-control decimal comma_amount" id="loan_amount" placeholder="Enter Amount to Borrow" required/>
                         </div>
                         <div class="form-group mb-2">
                             <label> Customer <span style="color:red">*</span></label>
                             
-                            <select class="form-select" name="custno" id="customer" required>
+                            <select class="form-select" name="custno" id="customer">
                                 <option value="">---</option>
                                 <?php foreach($customers as $customer): ?>
                                     <option value="<?= $customer['custno']; ?>"><?= $customer['surname'].', '.$customer['firstname'].' '.$customer['middlename'] ; ?></option>
@@ -38,7 +38,17 @@
                         </div>
                         <div class="form-group mb-2">
                             <label> Loan Date <span style="color:red">*</span></label>
-                            <input type="text" name="loan_date" class="form-control datepicker" placeholder="Loan Date" required/>
+                            <input type="text" name="loan_date" class="form-control datepicker" placeholder="Date when loan is applied" required/>
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label> Date of First Payment <span style="color:red">*</span> 
+                                <i class="fa-solid fa-circle-info" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="right" 
+                                   title="Select date of when first payment can be collected."></i>
+                            </label>
+                            <input type="text" name="first_payment" class="form-control datepicker" id="first_payment" placeholder="First Scheduled Payment" required/>  
                         </div>
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary mt-2">Save</button>
@@ -52,20 +62,54 @@
 <script>
     $(document).ready(function() {
         $('#customer').chosen(); // initialize chosen select
-
-        $('.decimal').on('input', function() {
-            this.value = this.value
-                .replace(/[^\d.]/g, '')             // numbers and decimals only
-                //.replace(/(^[\d]{4})[\d]/g, '$1')   // not more than 4 digits at the beginning
-                .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
-                .replace(/(\.[\d]{2})./g, '$1');    // not more than 2 digits after decimal
+                            
+        document.querySelector('form').addEventListener('submit', function(e) {
+            var loanAmountInput = document.getElementById('loan_amount');
+            if (loanAmountInput) {
+                loanAmountInput.value = loanAmountInput.value.replace(/,/g, '');
+            }
         });
 
-        $('.datepicker').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            todayHighlight: true,
-        });
+        this.querySelector('form').addEventListener('submit', function(e) {
+            var loanAmount = document.getElementById('loan_amount').value.trim();
+            var customer = document.getElementById('customer').value.trim();
+            var loanDate = document.querySelector('input[name="loan_date"]').value.trim();
+            var firstPayment = document.getElementById('first_payment').value.trim();
+            var i = 0;
+
+            var errors = [];
+
+
+            if (!loanAmount || isNaN(loanAmount.replace(/,/g, '')) || Number(loanAmount.replace(/,/g, '')) < 6000) {
+                errors.push(++i + '. Please enter a valid loan amount of at least 6,000.');
+            }
+
+            if (!customer) {
+                errors.push(++i + '. Please select a customer.');
+            }
+            if (!loanDate) {
+                errors.push(++i + '. Please enter the loan date.');
+            }
+            if (!firstPayment) {
+                errors.push(++i + '. Please enter the date of first payment.');
+            }
+
+            if (new Date(firstPayment) <= new Date(loanDate)) {
+                errors.push(++i + '. The date of first payment must be after the loan date.');
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                var errorStr = errors.join('\n');
+                console.log(errorStr);
+                bootbox.alert({
+                    title: 'Error Messages',
+                    message: errorStr,
+                    className: 'animate__animated animate__bounce'
+                });
+            }
+        }, true);
+                            
     });
 </script>
 
