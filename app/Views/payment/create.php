@@ -78,20 +78,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('.decimal').on('input', function() {
-            this.value = this.value
-                .replace(/[^\d.]/g, '')             // numbers and decimals only
-                // .replace(/(^[\d]{4})[\d]/g, '$1')   // not more than 4 digits at the beginning
-                .replace(/(\..*)\./g, '$1')         // decimal can't exist more than once
-                .replace(/(\.[\d]{2})./g, '$1');    // not more than 2 digits after decimal
-        });
-
-        $('.datepicker').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            todayHighlight: true,
-        });
-
         // initialize chosen selects
         $('#customer').chosen();
 
