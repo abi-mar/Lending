@@ -129,7 +129,7 @@ class ReportController extends BaseController {
         $scheduledPayment = new ScheduledPaymentModel();
 
         $scheduledPayment->select('(
-            SELECT s2.amount
+            SELECT IFNULL(SUM(s2.amount), 0)
             FROM scheduled_payment s2
             WHERE s2.row_id < scheduled_payment.row_id AND scheduled_payment.loan_record_row_id = s2.loan_record_row_id        
             ORDER BY s2.row_id

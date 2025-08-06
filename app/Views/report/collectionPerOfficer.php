@@ -151,7 +151,7 @@
                     rows += '<td>'+collection.savings+'</td>';                    
                     rows += '<td>'+collection.weekno+'</td>';
                     rows += '<td>'+collection.balance+'</td>';
-                    rows += '<td>'+collection.DQ+'</td>';
+                    rows += '<td>'+(collection.DQ === null || collection.DQ === 0 ? '' : collection.DQ)+'</td>';
                     rows += '<td>'+collection.remaining_debt+'</td>';
                     rows += '<td>'+collection.previous_amount+'</td>';
                     rows += '<td></td>';
@@ -175,7 +175,7 @@
                 rows += '<td>'+totalSavings.toFixed(2)+'</td>';
                 rows += '<td></td>';
                 rows += '<td>'+totalLoanBalance.toFixed(2)+'</td>';
-                rows += '<td>'+totalDQ.toFixed(2)+'</td>';
+                rows += '<td></td>'; // no total for DQ
                 rows += '<td>'+totalCurrent.toFixed(2)+'</td>';
                 rows += '<td>'+totalLastWeek.toFixed(2)+'</td>';
                 rows += '<td></td>';
