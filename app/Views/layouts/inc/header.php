@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="<?= base_url("assets/css/dataTables.bootstrap5.css") ?>">        
         <link rel="stylesheet" href="<?= base_url("assets/css/datepicker.min.css") ?>"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="<?= base_url("assets/css/animate.min.css") ?>">
 
         <!-- chosen select -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
@@ -69,6 +70,13 @@
         <script src="<?= base_url('assets/js/dataTables.min.js') ?>" crossorigin="anonymous"></script>        
         <script src="<?= base_url('assets/js/dataTables.bootstrap5.js') ?>" crossorigin="anonymous"></script>
         <script src="<?= base_url('assets/js/datepicker.min.js') ?> "></script>
+        <script src="<?= base_url('assets/js/utility.js') ?>"></script>        
+
+        <!-- bootbox code -->
+        <!-- reference: https://bootboxjs.com/getting-started#usage-instructions -->
+        <script src="<?= base_url('assets/js/bootbox.min.js') ?>"></script>
+        <script src="<?= base_url('assets/js/bootbox.locales.min.js') ?>"></script>
+        
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
         
