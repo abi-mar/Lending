@@ -59,13 +59,14 @@ class LoanController extends BaseController
         }
 
         if ($this->request->getPost('loan_amount') < 6000) {
-            return redirect('lending/loan/create')->with('error','Loan amount must be at least 6000.');
+            return redirect('lending/loan/create')->with('error','Loan amount must be at least 6000. You entered: '.$this->request->getPost('loan_amount'));
         }
 
         $loan = new LoanModel();
 
         $loan_amount = $this->request->getPost('loan_amount');
         $loan_date = $this->request->getPost('loan_date');
+        $first_payment = $this->request->getPost('first_payment');
 
         // make constants in future
         $service_fee = $loan_amount * 0.058; // loan amount x 5.8%
@@ -128,6 +129,7 @@ class LoanController extends BaseController
             'notes' => '[LOAN ADDED] '.
                     '; [loan_amount] ' .           $loan_amount,        
                     '; [loan_date] ' .             $loan_date,
+                    '; [first_payment] ' .         $first_payment,
                     '; [weekly_amortization] ' .   $weekly_amortization,
                     '; [net_proceeds] ' .          $net_proceeds,
                     '; [amount_topay] ' .          $amount_topay,
@@ -148,11 +150,11 @@ class LoanController extends BaseController
         $scheduled_payments = new ScheduledPaymentModel();
 
         $weekly_date = '';
-        for ($i = 1; $i <= 13; $i++) { // start to pay after 1 week, if NOW $i=0            
-            $weekly_date = date('Y-m-d', strtotime($loan_date . " +$i week"));
+        for ($i = 0; $i < 13; $i++) { // start to pay after 1 week, if NOW $i=0            
+            $weekly_date = date('Y-m-d', strtotime($first_payment . " +$i week"));
             $sPayment_data = [
                 'amount' => 0,
-                'weekno' => $i,
+                'weekno' => $i+1, // weekno starts at 1
                 'date_paid' => NULL,
                 'scheduled_date' => $weekly_date,
                 'added_by' => NULL,
