@@ -91,11 +91,6 @@
 
 <script>    
     $(document).ready(function() {
-        $('.datepicker').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            todayHighlight: true,
-        });
 
         $('input[name="collection_date"]').on('change', function() {
             var date = new Date($(this).val());
