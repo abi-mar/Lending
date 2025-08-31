@@ -153,12 +153,12 @@ class PaymentController extends BaseController
         $remainingAmount = $amount;
 
         foreach ($scheduledPayments as $row) {
-            
-            if ($remainingAmount >= $row['remaining_debt']) { // fully paid scheduled payment                
+            if ($remainingAmount >= $row['remaining_debt'] 
+                || abs($remainingAmount - $row['remaining_debt']) == 0) { 
                 $remainingAmount = $remainingAmount - $weekly_amortization;
                 $scheduledPayment->update($row['row_id'], ['is_paid' => 1, 'amount' => $weekly_amortization, 
                 'date_paid' => $this->request->getPost('payment_date'), 'paid_by' => session()->get('username'), 'remaining_debt' => 0, 'added_by' => session()->get('username')]);
-            } else if ($remainingAmount < $row['remaining_debt'] && $remainingAmount > 0) {
+            } else if ($remainingAmount < $row['remaining_debt'] && $remainingAmount > 0.99) { // ignore remaining amount less than 1
                 $debt = $row['remaining_debt'] - $remainingAmount;
                 $remainingAmount = 0;
                 $scheduledPayment->update($row['row_id'], ['remaining_debt' => $debt]);

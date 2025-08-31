@@ -50,6 +50,7 @@ $routes->get('lending/report/generate', 'ReportController::generateReport', ['fi
 $routes->get('lending/report/collectionPerOfficer', 'ReportController::showCollectionPerOfficer', ['filter' => 'authFilter']);
 $routes->get('lending/report/getCollectionPerOfficer/(:num)/(:any)', 'ReportController::getCollectionPerOfficer/$1/$2', ['filter' => 'authFilter']);
 $routes->post('lending/report/exportCollectionPerOfficer', 'ReportController::exportCollectionPerOfficerToExcel', ['filter' => 'authFilter']);
+$routes->post('lending/report/exportCollectionPerOfficerPerWeekToExcel', 'ReportController::exportCollectionPerOfficerPerWeekToExcel', ['filter' => 'authFilter']);
 
 
 // current not used

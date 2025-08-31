@@ -125,8 +125,7 @@
     </div>
 </div>
 
-
-<script>    
+<script>
     $(document).ready(function() {
 
         $('input[name="collection_date"]').on('change', function() {
@@ -146,7 +145,7 @@
         $('#btnGenerate').on('click', function() {
 
             if ($('input[name="report_type"]:checked').val() === 'perDay') {
-                $('perWeekOutput').hide();
+                $('#perWeekOutput').hide();
                 $('#perDayOutput').show();
                 $('#collectionsTable tbody').empty();
                 // Validate inputs
@@ -217,7 +216,8 @@
                     rows += '<td></td>';
                     rows += '</tr>';                
 
-                    $('#collectionsTable tbody').html(rows);
+                    $('#collectionsTable tbody').html(rows);                    
+                    // $('#collectionsTable').show();
                 });
             } else { // Per Week report
                 $('#perDayOutput').hide();                
@@ -261,7 +261,7 @@
 
                 $('#perWeekOutput').html(tabsHtml + tabContentHtml);
                 $('#perWeekOutput').show();
-                $('#collectionsTable').hide();
+                // $('#collectionsTable').hide();
 
                 // Fetch collections for each day
                 for (let i = 0; i < 7; i++) {
@@ -339,26 +339,50 @@
             return false;
             }
 
-            if (!collectionDate) {
-            alert('Please select a Collection Date.');
-            return false;
-            }
+            
 
-            var url = '<?= base_url('lending/report/exportCollectionPerOfficer') ?>';
-            $.post(url, 
-                { 
-                    account_officer: accountOfficer, 
-                    collection_date: collectionDate, 
-                    loan_cycle: loanCycle, 
-                    account_officer_name: $('#accountOfficer option:selected').text(),
-                    last_week: $('#last_week').text()    
-                 }, 
-                function(response) {
-                    // Handle the response
-                    var resp = JSON.parse(response);
-                    alert('Report has been exported successfully. Complete path: '+resp.file);
+            if ($('input[name="report_type"]:checked').val() === 'perDay') {
+                if (!collectionDate) {
+                alert('Please select a Collection Date.');
+                return false;
                 }
-            );
+
+                var url = '<?= base_url('lending/report/exportCollectionPerOfficer') ?>';
+                $.post(url, 
+                    { 
+                        account_officer: accountOfficer, 
+                        collection_date: collectionDate, 
+                        loan_cycle: loanCycle, 
+                        account_officer_name: $('#accountOfficer option:selected').text()
+                    }, 
+                    function(response) {
+                        // Handle the response
+                        var resp = JSON.parse(response);
+                        alert('Report has been exported successfully. Complete path: '+resp.file);
+                    }
+                );
+            } else { // per week
+                var weekStartDate = $('#weekStartDate').val();
+                if (!weekStartDate) {   
+                    alert('Please select a Week Start Date.');
+                    return false;
+                }
+
+                var url = '<?= base_url('lending/report/exportCollectionPerOfficerPerWeekToExcel') ?>';
+                $.post(url, 
+                    { 
+                        account_officer: accountOfficer, 
+                        collection_date: collectionDate, 
+                        loan_cycle: loanCycle, 
+                        account_officer_name: $('#accountOfficer option:selected').text()
+                    }, 
+                    function(response) {
+                        // Handle the response
+                        var resp = JSON.parse(response);
+                        alert('Report has been exported successfully. Complete path: '+resp.file);
+                    }
+                );
+            }
         });
     });
 </script>
