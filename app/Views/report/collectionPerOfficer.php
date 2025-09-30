@@ -142,6 +142,13 @@
             $('#last_week').text(lastWeekFormatted);
         });
 
+        $('input[name="week_start_date"]').on('change', function() {
+            var date = new Date($(this).val());
+            var month = date.getMonth();
+            var cycle = (month >= 0 && month <= 5) ? 'First Cycle' : 'Second Cycle';
+            $('#loanCyclelbl').text(cycle);
+        });
+
         $('#btnGenerate').on('click', function() {
 
             if ($('input[name="report_type"]:checked').val() === 'perDay') {
@@ -331,17 +338,16 @@
 
         $('#btnExport').on('click', function() {
             var accountOfficer = $('#accountOfficer').val();
-            var collectionDate = $('#collectionDate').val();
+            
             var loanCycle = $('#loanCyclelbl').text();
 
             if (!accountOfficer) {
             alert('Please select an Account Officer.');
             return false;
-            }
-
-            
+            }            
 
             if ($('input[name="report_type"]:checked').val() === 'perDay') {
+                var collectionDate = $('#collectionDate').val();
                 if (!collectionDate) {
                 alert('Please select a Collection Date.');
                 return false;
@@ -372,7 +378,7 @@
                 $.post(url, 
                     { 
                         account_officer: accountOfficer, 
-                        collection_date: collectionDate, 
+                        collection_date: weekStartDate, 
                         loan_cycle: loanCycle, 
                         account_officer_name: $('#accountOfficer option:selected').text()
                     }, 

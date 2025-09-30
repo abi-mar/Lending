@@ -155,14 +155,15 @@ class ReportController extends BaseController {
 
         $data = $scheduledPayment->findAll();
         return json_encode($data);
-    }
+    }    
 
+    // Per Day Export to Excel
     public function exportCollectionPerOfficerToExcel() {
         $accountOfficersId = $this->request->getPost('account_officer');
         $collectionDate = $this->request->getPost('collection_date');
         $loan_cycle = $this->request->getPost('loan_cycle');
         $accountOfficerName = $this->request->getPost('account_officer_name');
-        $lastWeek = $this->request->getPost('last_week');
+        $lastWeekDate = date('M d', strtotime($collectionDate . ' -7 days'));
 
         $data = json_decode($this->getCollectionPerOfficer($accountOfficersId, $collectionDate), true);
 
@@ -201,7 +202,7 @@ class ReportController extends BaseController {
         $sheet->setCellValue('F8', 'Loan Balance');
         $sheet->setCellValue('G8', 'Delinquent (DQ)');
         $sheet->setCellValue('H8', 'Current');
-        $sheet->setCellValue('I8', $lastWeek);        
+        $sheet->setCellValue('I8', $lastWeekDate);        
         $sheet->setCellValue('J8', 'Payment');
 
         // Set header to bold
@@ -268,8 +269,6 @@ class ReportController extends BaseController {
             $sheet->getStyle($columnID . '1:' . $columnID . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
         }
 
-
-
         $writer = new Xlsx($spreadsheet);        
         $fileName = 'Collection_Per_Officer_' . $collectionDate . '_'. trim($accountOfficerName) . '_' . date('Ymd_His') . '.xlsx';
         $filePath = 'C:/Users/' . getenv('USERNAME') . '/Downloads/' . $fileName;
@@ -278,6 +277,115 @@ class ReportController extends BaseController {
         return json_encode(['file' => $filePath]);
     }
     /**[END] Collection Per Officer Report */
+
+    // Per Week Export to Excel
+    public function exportCollectionPerOfficerPerWeekToExcel() {
+        $accountOfficersId = $this->request->getPost('account_officer');
+        $collectionDate = $this->request->getPost('collection_date');
+        $loan_cycle = $this->request->getPost('loan_cycle');
+        $accountOfficerName = $this->request->getPost('account_officer_name');
+
+		$startDate = new \DateTime($collectionDate);
+        $endDate = clone $startDate;
+        $endDate->modify('+6 days');
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0); // Remove default sheet
+
+        $period = new \DatePeriod($startDate, new \DateInterval('P1D'), $endDate->modify('+1 day'));
+
+        foreach ($period as $date) {
+            $dateStr = $date->format('Y-m-d');
+            $collectionDateStr = $date->format('l, F j, Y');
+            $lastWeekDate = date('M d', strtotime($dateStr . ' -7 days'));
+
+            $data = json_decode($this->getCollectionPerOfficer($accountOfficersId, $dateStr), true);
+
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($date->format('M-d'));
+
+            $sheet->setCellValue('B3', 'Account Officer:');
+            $sheet->setCellValue('C3', $accountOfficerName);
+            $sheet->setCellValue('B4', 'Date Collection:');
+            $sheet->setCellValue('C4', $collectionDateStr);
+            $sheet->setCellValue('B5', 'Loan Cycle:');
+            $sheet->setCellValue('C5', $loan_cycle);
+
+            $sheet->getStyle('B3:B5')->getFont()->setBold(true);
+
+            $sheet->setCellValue('B8', 'Client ID');
+            $sheet->setCellValue('C8', 'Client Name');
+            $sheet->setCellValue('D8', 'Savings');
+            $sheet->setCellValue('E8', 'Week No');
+            $sheet->setCellValue('F8', 'Loan Balance');
+            $sheet->setCellValue('G8', 'Delinquent (DQ)');
+            $sheet->setCellValue('H8', 'Current');
+            $sheet->setCellValue('I8', $lastWeekDate);
+            $sheet->setCellValue('J8', 'Payment');
+
+            $sheet->getStyle('B8:J8')->getFont()->setBold(true);
+
+            $row = 9;
+            foreach ($data as $item) {
+                $sheet->setCellValue('B' . $row, $item['custno']);
+                $sheet->setCellValue('C' . $row, $item['client_name']);
+                $sheet->setCellValue('D' . $row, number_format($item['savings'], 2));
+                $sheet->setCellValue('E' . $row, $item['weekno']);
+                $sheet->setCellValue('F' . $row, number_format($item['balance'], 2));
+                $sheet->setCellValue('G' . $row, number_format($item['DQ'], 2));
+                $sheet->setCellValue('H' . $row, number_format($item['remaining_debt'], 2));
+                $sheet->setCellValue('I' . $row, number_format($item['previous_amount'], 2));
+                $sheet->setCellValue('J' . $row, '');
+                $row++;
+            }
+
+            $sheet->setCellValue('B' . $row, 'Total');
+            $sheet->setCellValue('D' . $row, '=SUMPRODUCT(--SUBSTITUTE(D9:D' . ($row - 1) . ', ",", ""))');
+            $sheet->setCellValue('F' . $row, '=SUMPRODUCT(--SUBSTITUTE(F9:F' . ($row - 1) . ', ",", ""))');
+            $sheet->setCellValue('G' . $row, '=SUMPRODUCT(--SUBSTITUTE(G9:G' . ($row - 1) . ', ",", ""))');
+            $sheet->setCellValue('H' . $row, '=SUMPRODUCT(--SUBSTITUTE(H9:H' . ($row - 1) . ', ",", ""))');
+            $sheet->setCellValue('I' . $row, '=SUMPRODUCT(--SUBSTITUTE(I9:I' . ($row - 1) . ', ",", ""))');
+
+            $sheet->getStyle('D9:D' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('F9:F' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('G9:G' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('H9:H' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+            $sheet->getStyle('I9:I' . $row)->getNumberFormat()->setFormatCode('#,##0.00');
+
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'color' => ['argb' => 'FF000000'],
+                    ],
+                ],
+            ];
+            $sheet->getStyle('B8:J' . $row)->applyFromArray($styleArray);
+
+            $sheet->getStyle('B' . $row . ':J' . $row)->applyFromArray([
+                'fill' => [
+                    'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => 'FFFFFF00',
+                    ],
+                ],
+            ]);
+            $sheet->getStyle('B' . $row . ':J' . $row)->getFont()->setBold(true);
+
+            foreach (range('B', 'J') as $columnID) {
+                $sheet->getColumnDimension($columnID)->setAutoSize(true);
+                $sheet->getStyle($columnID . '1:' . $columnID . $row)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+            }
+        }
+
+        $spreadsheet->setActiveSheetIndex(0);
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Collection_Per_Officer_Week_' . $collectionDate . '_'. trim($accountOfficerName) . '_' . date('Ymd_His') . '.xlsx';
+        $filePath = 'C:/Users/' . getenv('USERNAME') . '/Downloads/' . $fileName;
+        $writer->save($filePath);
+
+        return json_encode(['file' => $filePath]);
+    }
 
     /**[START] PENDING PAYMENTS (Currently not used)*/
 
